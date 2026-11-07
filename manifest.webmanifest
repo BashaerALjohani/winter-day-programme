@@ -1,0 +1,17 @@
+{
+  "name": "The Winter Day",
+  "short_name": "Winter Day",
+  "description": "تطبيق The Winter Day: البرنامج والورش والبوثات | The Winter Day app: programme, workshops and booths",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050E22",
+  "theme_color": "#050E22",
+  "icons": [
+    { "src": "media/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "media/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
