@@ -1,29 +1,13 @@
-/*
-  محتوى تطبيق The Winter Day
-  ---------------------------------------------
-  كل نصوص الموقع ومواعيده وبوثاته في هذا الملف فقط.
-  كل نص له نسختين: ar للعربي و en للإنجليزي.
-  art: اسم رسمة من art.js (تظهر لو الصورة ما تحمّلت).
-  photo: صورة حقيقية في media/photos (من Unsplash، الحقوق في CREDITS.md). بدّليها بصور البوثات لما توصل.
-
-  المؤكد من فريق Event Management (إيميل 1 نوفمبر):
-  - 4 ورش، كل ورشة فترتين: 10:00–10:45 و 11:15–12:00، وكل فترة 10 أشخاص بالكثير.
-  - 9 بوثات مؤكدة، والهدف 15 بوث.
-  - عرض فيلم أو جلسة يوغا: يُحدد لاحقًا.
-  تجريبي (لين يوصل الرسمي): أسماء الورش والبوثات والمنتجات، الأماكن، باقي الفقرات.
-  الأسعار تقريبية من السوق السعودي (بالريال) وللعرض فقط. ما فيه تذكرة دخول.
-*/
-
 const EVENT = {
   name: 'The Winter Day',
   organizer: 'Elevate Events',
-  date: '2026-12-17',          // سنة-شهر-يوم
-  start: '08:00',              // بداية اليوم (نظام 24 ساعة)
-  end: '13:45',                // نهاية اليوم (البوثات ما لها وقت)
+  date: '2026-12-17',
+  start: '08:00',
+  end: '13:45',
   location: { ar: 'الكليات التقنية العالمية – المدينة المنورة', en: 'International Technical Colleges – Madinah' },
   guests: 1300,
-  workshopSeats: 10,           // عدد الأشخاص لكل فترة ورشة
-  vendorsTarget: 15,           // البوثات المستهدفة (المؤكد = عدد VENDORS)
+  workshopSeats: 10,
+  vendorsTarget: 15,
   help: {
     ar: 'مكتب الاستقبال عند البوابة الرئيسية، وفريق Elevate Events موجود طوال اليوم.',
     en: 'Go to the welcome desk at the main gate. The Elevate Events team is there all day.',
@@ -38,14 +22,12 @@ const EVENT = {
   ],
 };
 
-// أنواع فقرات البرنامج
 const CATEGORIES = {
   workshop: { label: { ar: 'ورش عمل', en: 'Workshops' }, color: '#1D4F91' },
   activity: { label: { ar: 'أنشطة وترفيه', en: 'Activities' }, color: '#4C8DD6' },
   general:  { label: { ar: 'فقرات عامة', en: 'General' }, color: '#8FA3BF' },
 };
 
-// الورش الأربع: كل ورشة تتكرر في الفترتين تلقائيًا
 const WORKSHOP_SLOTS = [['10:00', '10:45'], ['11:15', '12:00']];
 const WORKSHOPS = [
   { id: 'w1', takeaway: { ar: 'كوب بتصميمك', en: 'A mug in your design' }, art: 'mug-paint', photo: 'media/photos/ws-mug.jpg',
@@ -66,7 +48,6 @@ const WORKSHOPS = [
     description: { ar: 'لوّني حقيبة قماش بتصميم شتوي، وتطلعين فيها من الورشة.', en: 'Paint a cotton tote with a winter design and leave carrying it.' } },
 ];
 
-// باقي الفقرات. فقرة بدون وقت (start: null) تظهر «يُعلن قريبًا»
 const OTHER_SESSIONS = [
   { id: 's1', start: '08:00', end: '08:30', category: 'general', art: 'flake', photo: 'media/photos/welcome.jpg',
     title: { ar: 'الاستقبال والافتتاح', en: 'Welcome & opening' },
@@ -80,7 +61,7 @@ const OTHER_SESSIONS = [
     title: { ar: 'التجارب الرياضية والترفيهية', en: 'Sports & fun challenge' },
     location: { ar: 'الساحة الخارجية', en: 'Outdoor yard' },
     description: { ar: 'تحديات رياضية خفيفة وممتعة للجميع.', en: 'Light, fun sports challenges for everyone.' } },
-  { id: 's4', start: null, end: null, category: 'activity', art: 'film', photo: 'media/photos/popcorn.jpg',  // لو اختاروا اليوغا غيّري الصورة
+  { id: 's4', start: null, end: null, category: 'activity', art: 'film', photo: 'media/photos/popcorn.jpg',
     title: { ar: 'عرض فيلم أو جلسة يوغا', en: 'Movie screening or yoga' },
     location: { ar: 'يُحدد لاحقًا', en: 'To be confirmed' },
     description: { ar: 'فريق الفعالية يختار بين عرض فيلم وجلسة يوغا، وبيتأكد قريبًا.', en: 'The event team is choosing between a movie screening and a yoga session.' } },
@@ -90,8 +71,6 @@ const OTHER_SESSIONS = [
     description: { ar: 'سحب على جوائز بين الحاضرات وكلمة الختام.', en: 'A prize draw for guests and closing words.' } },
 ];
 
-// خريطة اليوم (توضيحية لين تتأكد الأماكن): مناطق على مخطط 400×470
-// rooms: قاعات الورش بالترتيب، hall/corridor: أماكن البوثات حسب رقم البوث في location
 const MAP_ZONES = [
   { id: 'yard', x: 10, y: 10, w: 380, h: 58, label: { ar: 'الساحة الخارجية', en: 'Outdoor yard' }, sessions: ['s3'] },
   { id: 'stage', x: 120, y: 80, w: 160, h: 70, label: { ar: 'المسرح الرئيسي', en: 'Main stage' }, sessions: ['s1', 's5'] },
@@ -101,7 +80,6 @@ const MAP_ZONES = [
   { id: 'gate', x: 150, y: 432, w: 100, h: 30, label: { ar: 'البوابة', en: 'Gate' }, gate: true },
 ];
 
-// يجمع الورش (بفترتيها) مع باقي الفقرات – لا تعدّلي هنا
 const SESSIONS = [
   ...WORKSHOPS.flatMap((w) => WORKSHOP_SLOTS.map(([start, end], i) => ({
     ...w, id: `${w.id}-${i + 1}`, workshop: w.id, slot: i + 1, start, end,
@@ -110,8 +88,6 @@ const SESSIONS = [
   ...OTHER_SESSIONS,
 ];
 
-// أقسام البوثات (من ملف الفعالية)
-// color: لون البوث في الخريطة
 const BOOTH_CATEGORIES = {
   cafes: { color: '#E8B07A', label: { ar: 'الكوفيهات', en: 'Cafés' }, art: 'latte', photo: 'media/photos/latte.jpg', },
   home: { color: '#F2D27A', label: { ar: 'الأسر المنتجة', en: 'Home businesses' }, art: 'honey', photo: 'media/photos/honey.jpg', },
@@ -119,7 +95,6 @@ const BOOTH_CATEGORIES = {
   clothing: { color: '#7EE7D6', label: { ar: 'ملابس', en: 'Clothing' }, art: 'scarf', photo: 'media/photos/knit-fabric.jpg', },
 };
 
-// البوثات المؤكدة (9) ومنتجاتها – الأسماء والأسعار تجريبية
 const VENDORS = [
   { id: 'nadfa', category: 'cafes', art: 'latte', photo: 'media/photos/cafe-cover.jpg',
     name: { ar: 'ندفة كافيه', en: 'Nadfa Café' },
@@ -215,7 +190,6 @@ const VENDORS = [
     ] },
 ];
 
-// الأسئلة الشائعة
 const FAQ = [
   { q: { ar: 'كم عدد المقاعد في الورش؟', en: 'How many places are in each workshop?' },
     a: { ar: 'كل ورشة لها فترتين، وكل فترة 10 أشخاص بالكثير. احضري قبل الموعد بدقائق.',
@@ -231,10 +205,8 @@ const FAQ = [
   { q: { ar: 'أحتاج مساعدة، وين أروح؟', en: 'I need help. Where do I go?' }, a: EVENT.help },
 ];
 
-// مختارات شتوية في الرئيسية: بوث/منتج
 const FEATURED = ['cozy-knits/hoodie', 'frost/earrings', 'nadfa/latte', 'winter-abayas/abaya', 'home-goodness/honey', 'cocoa-house/cocoa'];
 
-// «اكتشفي يومك الشتوي»: 3 أسئلة تطلع شخصية وخطة يوم (ورشة + مشروب + منتج)
 const QUIZ = {
   questions: [
     { q: { ar: 'وش يناسب مزاجك اليوم؟', en: 'What fits your mood today?' }, options: [

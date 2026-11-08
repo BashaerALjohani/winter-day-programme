@@ -19,15 +19,15 @@
   <meta property="og:url" content="https://bashaeraljohani.github.io/winter-day-programme/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Tajawal للنصوص، El Messiri للعناوين العربية، Cormorant Garamond لاسم الفعالية والأرقام -->
+
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=El+Messiri:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- النصوص الثابتة تتبدّل حسب اللغة: data-i18n (النص) و data-i18n-aria -->
+
   <svg class="sprite" aria-hidden="true">
     <defs>
-      <!-- رجل الثلج والتلال وأشجار الصنوبر (تُستخدم من app.js) -->
+
       <radialGradient id="sm-snow" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#F1F7FD"/><stop offset="1" stop-color="#C5D9EE"/></radialGradient>
       <linearGradient id="hill-far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C9BC8" stop-opacity=".55"/><stop offset="1" stop-color="#24406E" stop-opacity=".2"/></linearGradient>
       <linearGradient id="hill-mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6E6F5"/><stop offset="1" stop-color="#8FAED4"/></linearGradient>
@@ -64,7 +64,6 @@
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
   </svg>
 
-  <!-- شاشة البداية (بعد الأيقونات عشان الندفة تنرسم كاملة) -->
   <div id="splash" aria-hidden="true">
     <svg><use href="#flake"/></svg>
     <span dir="ltr">The Winter Day</span>
@@ -83,7 +82,6 @@
     <button type="button" class="lang-btn" id="lang-btn" lang="en" aria-label="Switch to English">EN</button>
   </header>
 
-  <!-- ثلج خفيف فوق كل الصفحات (زر ❄ في الشريط العلوي) -->
   <canvas id="global-snow" aria-hidden="true"></canvas>
 
   <main id="view" tabindex="-1"></main>
@@ -98,19 +96,16 @@
     <a href="#/info" data-route="info"><svg aria-hidden="true"><use href="#i-info"/></svg><span data-i18n="navInfo">معلومات</span></a>
   </nav>
 
-  <!-- نافذة التفاصيل (فقرة أو منتج): محتواها يتعبّى من app.js -->
   <dialog id="sheet" class="sheet" aria-labelledby="sh-title">
     <form method="dialog" class="sh-close"><button class="icon-btn" data-i18n-aria="close" aria-label="إغلاق">×</button></form>
     <div id="sh-content"></div>
   </dialog>
 
-  <!-- «اكتشفي يومك الشتوي» -->
   <dialog id="quiz" class="sheet quiz" aria-labelledby="quiz-title">
     <form method="dialog" class="sh-close"><button class="icon-btn" data-i18n-aria="close" aria-label="إغلاق">×</button></form>
     <div id="quiz-content"></div>
   </dialog>
 
-  <!-- «بطاقتي الشتوية» -->
   <dialog id="maker" class="sheet maker" aria-labelledby="maker-title">
     <form method="dialog" class="sh-close"><button class="icon-btn" data-i18n-aria="close" aria-label="إغلاق">×</button></form>
     <div id="maker-content"></div>

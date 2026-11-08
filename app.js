@@ -1,4 +1,3 @@
-/* The Winter Day – التطبيق. المحتوى في data.js والرسومات في art.js */
 (function () {
   'use strict';
 
@@ -12,12 +11,10 @@
   const SNOW_KEY = 'winterday-snow';
   const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // العدد مع الاسم بالعربي: [واحد، اثنين، 3–10، 11+]
   const arCount = (n, [one, two, few, many]) =>
     (n === 1 ? one : n === 2 ? two : n <= 10 ? `${n} ${few}` : `${n} ${many}`);
   const enCount = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
-  // ---------- نصوص الواجهة ----------
   const UI = {
     ar: {
       pageTitle: 'The Winter Day | برنامج الفعالية',
@@ -180,25 +177,23 @@
     homeBoothCat: 'cafes', mapSel: null, checks: load(CHECK_KEY, []),
   };
   let progSig = '', progWalkerUpdate = null;
-  const cleanups = [];  // تنظيف المؤقتات والمستمعات عند تغيير الصفحة
+  const cleanups = [];
   const T = () => UI[state.lang];
   const L = (obj) => (typeof obj === 'string' ? obj : obj[state.lang] || obj.ar);
 
-  // اللغة: ?lang=en في الرابط، أو آخر لغة اختارتها الزائرة، أو العربي
   function initialLang() {
     const param = new URLSearchParams(location.search).get('lang');
     if (param === 'en' || param === 'ar') return param;
-    try { const saved = localStorage.getItem(LANG_KEY); if (saved === 'en' || saved === 'ar') return saved; } catch (e) { /* بدون تخزين */ }
+    try { const saved = localStorage.getItem(LANG_KEY); if (saved === 'en' || saved === 'ar') return saved; } catch (e) { }
     return 'ar';
   }
   function load(key, fallback) {
     try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; }
   }
   function store(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* بدون تخزين: يبقى لهذي الزيارة */ }
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { }
   }
 
-  // ---------- الوقت ----------
   const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
   const fmt = (t) => {
     let [h, m] = t.split(':').map(Number);
@@ -211,7 +206,7 @@
     const [h, m] = time.split(':').map(Number);
     return new Date(y, mo - 1, d, h, m);
   }
-  // الوقت الحقيقي، أو ?now=10:45 في الرابط لتجربة يوم الفعالية (مفيد للعرض والتدريب)
+
   function now() {
     const demo = new URLSearchParams(location.search).get('now');
     if (demo && /^\d{1,2}:\d{2}$/.test(demo)) return at(demo);
@@ -220,7 +215,7 @@
   const isEventDay = (n) => n.toDateString() === at('00:00').toDateString();
   const minutesOf = (n) => n.getHours() * 60 + n.getMinutes();
   function statusOf(s, n) {
-    if (!s.start || !isEventDay(n)) return null;  // بدون وقت = ما يدخل في «الآن»
+    if (!s.start || !isEventDay(n)) return null;
     const m = minutesOf(n);
     if (m >= toMin(s.end)) return 'past';
     if (m >= toMin(s.start)) return 'live';
@@ -229,11 +224,10 @@
   const dateLabel = () => new Intl.DateTimeFormat(T().locale,
     { weekday: 'long', day: 'numeric', month: 'long' }).format(at('00:00'));
   const byTime = (a, b) => toMin(a.start) - toMin(b.start) || toMin(a.end) - toMin(b.end);
-  // الفقرات بدون وقت مؤكد تجي آخر شي
+
   const sorted = [...SESSIONS.filter((s) => s.start).sort(byTime), ...SESSIONS.filter((s) => !s.start)];
   const timeRange = (s) => (s.start ? `${fmt(s.start)} – ${fmt(s.end)}` : T().tbc);
 
-  // ---------- أدوات ----------
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const norm = (s) => s.toLowerCase()
@@ -246,7 +240,6 @@
     return [v, v.products.find((p) => p.id === pid)];
   };
 
-  // ---------- المفضلة: فقرات s:  بوثات v:  منتجات p:بوث/منتج ----------
   function loadFavs() {
     try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY)) || []); } catch (e) { return new Set(); }
   }
@@ -277,7 +270,6 @@
     $$('.fav-count').forEach((el) => { el.textContent = state.favs.size; el.hidden = !state.favs.size; });
   }
 
-  // ---------- رسالة صغيرة أسفل الشاشة ----------
   let toastTimer;
   function toast(msg) {
     const el = $('#toast');
@@ -287,7 +279,6 @@
     toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
   }
 
-  // ---------- اللغة ----------
   function applyLanguage() {
     const t = T();
     document.documentElement.lang = state.lang;
@@ -313,8 +304,6 @@
     if (makerEl.open) openMaker();
   }
 
-  // ---------- التنقل ----------
-  // روابط مباشرة: #/booth/بوث  #/session/فقرة  #/product/بوث/منتج (للمشاركة)
   function parseHash() {
     const [name, a, b] = location.hash.replace(/^#\/?/, '').split('/');
     if (name === 'booth' && VENDOR_BY_ID[a]) return { name: 'booth', id: a };
@@ -330,7 +319,7 @@
     renderView();
     const view = $('#view');
     view.classList.remove('enter');
-    void view.offsetWidth;  // يعيد حركة الدخول لكل صفحة
+    void view.offsetWidth;
     view.classList.add('enter');
     window.scrollTo(0, 0);
     if (state.route.sheet) openSheet(...state.route.sheet);
@@ -360,7 +349,6 @@
     setupReveal(view);
   }
 
-  // ---------- الرئيسية ----------
   function productCard(v, p, cls = '') {
     const pn = L(p.name);
     return `<article class="p-card tilt ${cls}">
@@ -370,13 +358,12 @@
       ${heart(`p:${v.id}/${p.id}`, pn, 'on-art')}
     </article>`;
   }
-  // رأس قسم موحّد: رقم + اسم القسم + عنوان + سطر قصير
+
   function secHead(num, kicker, title, sub, cls = '') {
     return `<header class="sec-head reveal ${cls}"><p class="sec-kicker"><span class="sec-num">${num}</span>${kicker}</p>
       <h2>${title}</h2>${sub ? `<p class="sec-sub">${sub}</p>` : ''}</header>`;
   }
 
-  // رجل الثلج (يُستخدم في الواجهة والبرنامج). الحالات: waving / walking / melting / melted / reform
   function snowman(cls = '') {
     return `<svg class="snowman ${cls}" viewBox="0 0 120 160" aria-hidden="true">
       <ellipse class="sm-puddle" cx="60" cy="150" rx="46" ry="7"/>
@@ -402,7 +389,6 @@
     </svg>`;
   }
 
-  // تلال ثلجية وأشجار صنوبر (front: لون التلة الأمامية)
   function landscape(cls, front) {
     const pine = (x, y, s) => `<use href="#pine" transform="translate(${x} ${y}) scale(${s})"/>`;
     return `<svg class="land ${cls}" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
@@ -532,7 +518,6 @@
       </section>`;
   }
 
-  // البوثات في الرئيسية: تبويب لكل قسم
   const boothNum = (v) => Number((v.location.en.match(/\d+/) || [0])[0]);
   function boothPanel(cat) {
     const t = T(), c = BOOTH_CATEGORIES[cat];
@@ -549,11 +534,10 @@
         <span class="bp-go">${icon('i-arrow')}</span></a>`).join('')}</div>`;
   }
 
-  // ---------- خريطة اليوم ----------
   const ROOMS = WORKSHOPS.map((w, i) => ({ id: `room${i + 1}`, x: 10, y: 80 + i * 74, w: 100, h: 66, workshop: w.id, n: i + 1 }));
   const zoneById = (id) => MAP_ZONES.find((z) => z.id === id) || ROOMS.find((r) => r.id === id);
   function pinSpots() {
-    // أماكن دبابيس البوثات داخل الممر والساحة
+
     const spots = {};
     MAP_ZONES.filter((z) => z.booths).forEach((z) => {
       const cols = z.booths.length > 3 ? 3 : z.booths.length, rows = Math.ceil(z.booths.length / cols);
@@ -576,7 +560,7 @@
       return `<g class="mp" data-pin="${v.id}" role="button" tabindex="0" aria-label="${esc(L(v.name))}" transform="translate(${x} ${y})" style="--c:${BOOTH_CATEGORIES[v.category].color}">
         <circle r="13"/><text y="4.5">${boothNum(v)}</text></g>`;
     }).join('');
-    // بوثات قادمة: دبابيس فاضية
+
     const empty = Object.keys(spots).filter((n) => !VENDORS.some((v) => boothNum(v) === Number(n)))
       .map((n) => `<g class="mp empty" transform="translate(${spots[n][0]} ${spots[n][1]})"><circle r="10"/></g>`).join('');
     const flakes = [[60, 40], [200, 36], [340, 44], [395, 300], [6, 300]].map(([x, y]) => `<use href="#flake" x="${x - 6}" y="${y - 6}" width="12" height="12" class="mflake"/>`).join('');
@@ -636,7 +620,6 @@
     }
   }
 
-  // ---------- «جهّزي نفسك للشتاء» ----------
   function checklist() {
     const t = T(), done = state.checks;
     const n = t.checkItems.filter((_, i) => done[i]).length;
@@ -657,8 +640,6 @@
     if (n === t.checkItems.length && on) { toast(t.checkDone); if (navigator.vibrate) navigator.vibrate([10, 40, 10]); }
   }
 
-  // ---------- رجل الثلج يمشي على مواعيد اليوم، يذوب في الختام، ويرجع من جديد ----------
-  // المواعيد تنقرأ من data.js: الافتتاح، فترتي الورش، التحديات، الجوائز، ونهاية اليوم
   const startOf = (id) => SESSIONS.find((s) => s.id === id).start;
   const DAY_STOPS = [[startOf('s1'), 's1'], [startOf('w1-1'), 'w1-1'], [startOf('w1-2'), 'w1-2'],
     [startOf('s3'), 's3'], [startOf('s5'), 's5'], [EVENT.end, 's5']];
@@ -690,7 +671,7 @@
       if (cls) sm.classList.add(cls);
       track.classList.toggle('melt', cls === 'melting' || cls === 'melted');
     };
-    // يوم الفعالية: يوقف عند الوقت الحالي، وبعد الختام يكون ذايب
+
     const n0 = now();
     if (isEventDay(n0) && minutesOf(n0) >= times[0]) {
       const m = minutesOf(n0);
@@ -724,7 +705,6 @@
     cleanups.push(() => { cancelAnimationFrame(raf); io.disconnect(); });
   }
 
-  // في صفحة البرنامج: رجل الثلج ينزل مع التمرير على الخط الزمني، يذوب في آخره، ويرجع لما ترجعين فوق
   function setupProgWalker() {
     const wrap = $('.tl-wrap');
     if (!wrap) return;
@@ -733,13 +713,13 @@
     const update = () => {
       raf = 0;
       const r = wrap.getBoundingClientRect(), h = walker.offsetHeight, room = Math.max(0, r.height - h);
-      // خط المتابعة عند 42% من الشاشة، وينزل لآخرها لما توصلين نهاية الصفحة (عشان يوصل الختام ويذوب)
+
       const left = document.documentElement.scrollHeight - innerHeight - scrollY;
       const line = innerHeight * (.42 + .58 * Math.min(1, Math.max(0, 1 - left / innerHeight)));
       const p = room ? Math.min(1, Math.max(0, (line - r.top) / room)) : 0;
       const y = p * room;
       walker.style.transform = `translateY(${y.toFixed(1)}px)`;
-      // الوقت اللي واقف عنده
+
       let label = '';
       $$('.tg-head', wrap).forEach((head) => { if (head.offsetTop <= y + h * .6) label = head.querySelector('.tg-time').textContent; });
       bubble.textContent = label;
@@ -764,7 +744,6 @@
     });
   }
 
-  // رجل الثلج في الواجهة: يسلّم ويقفز لما تضغطين عليه
   let helloIdx = 0, helloTimer = 0;
   function sayHello(btn) {
     const say = $('.sm-say', btn), t = T();
@@ -777,7 +756,6 @@
     if (navigator.vibrate) navigator.vibrate(10);
   }
 
-  // العد التنازلي في شريط الواجهة؛ يوم الفعالية يصير «جارية الآن»
   function renderCountdown() {
     const el = $('#countdown');
     if (!el) return;
@@ -794,14 +772,12 @@
     }
   }
 
-  // فيديو الخلفية: يشتغل بس إذا الزائرة ما طلبت تقليل الحركة أو توفير البيانات
   function setupHeroVideo(video) {
     if (!video || calm() || (navigator.connection && navigator.connection.saveData)) return;
     video.preload = 'auto';
-    video.play().catch(() => { /* المتصفح منع التشغيل التلقائي: تبقى الصورة */ });
+    video.play().catch(() => { });
   }
 
-  // ---------- ثلج تفاعلي: يبتعد عن الإصبع، والضغطة تنثره ----------
   function startSnow(canvas) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -866,7 +842,7 @@
     hero.addEventListener('pointerleave', leave);
     hero.addEventListener('pointerdown', tap);
     window.addEventListener('resize', size);
-    // يوقف لما الواجهة تطلع من الشاشة (توفير بطارية)
+
     const io = new IntersectionObserver(([en]) => {
       const vis = en.isIntersecting;
       if (vis && !running && !calm()) { running = true; raf = requestAnimationFrame(step); }
@@ -877,7 +853,6 @@
     cleanups.push(() => { running = false; cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('resize', size); });
   }
 
-  // رأس الصفحات الداخلية: سماء ليلية وثلج وتلال
   function pageBand(title, lead = '') {
     return `<section class="page-band">
       <canvas class="snow-canvas" aria-hidden="true"></canvas>
@@ -886,7 +861,6 @@
     </section>`;
   }
 
-  // ---------- البرنامج (خط زمني أو جدول) ----------
   function chips(attr, current, entries) {
     return [['all', T().all], ...entries].map(([key, label, color]) =>
       `<button type="button" class="chip" ${attr}="${key}" aria-pressed="${current === key}">
@@ -983,7 +957,6 @@
     if (progWalkerUpdate) progWalkerUpdate();
   }
 
-  // ---------- البوثات ----------
   function viewBooths() {
     const t = T();
     const cats = Object.entries(BOOTH_CATEGORIES).map(([k, c]) => [k, L(c.label)]);
@@ -1030,7 +1003,7 @@
       ? `<div class="v-card more-card">${icon('flake', 'more-flake')}<strong>${t.moreSoonT(missing)}</strong><span class="muted small">${t.moreSoonD}</span></div>` : '';
     if (!results.length) { list.innerHTML = `<div class="empty"><strong>${t.emptyT}</strong><span>${t.emptyD}</span></div>`; return; }
     if (state.boothCat === 'all' && !q) {
-      // الكل: كل قسم بعنوانه
+
       list.innerHTML = Object.entries(BOOTH_CATEGORIES).map(([k, c]) => {
         const vs = results.filter(([v]) => v.category === k);
         return vs.length ? `<section class="booth-group"><h2 class="group-head"><span class="dot" style="--dot:${c.color}"></span>${esc(L(c.label))}
@@ -1071,7 +1044,6 @@
     </div>`;
   }
 
-  // ---------- المفضلة ----------
   function viewFavourites() {
     const t = T();
     const n = now();
@@ -1107,7 +1079,6 @@
         <strong>${t.tileCardT}</strong><small>${t.tileCardD}</small></button></div>`;
   }
 
-  // ---------- المعلومات ----------
   function viewInfo() {
     const t = T();
     const info = [
@@ -1136,7 +1107,6 @@
       <div><strong>${t.qrTitle}</strong><p class="muted small">${t.qrText}</p></div></div>`;
   }
 
-  // ---------- تثبيت التطبيق (PWA) ----------
   let installPrompt = null;
   const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
   function installCard() {
@@ -1156,7 +1126,6 @@
     if (state.route.name === 'info') renderView();
   });
 
-  // ---------- مشاركة وتقويم ----------
   function shareBtn(path, title) {
     return `<button type="button" class="icon-btn share-btn" data-share="${path}" data-title="${esc(title)}"
       aria-label="${T().share}: ${esc(title)}">${icon('i-share')}</button>`;
@@ -1164,12 +1133,12 @@
   async function share(path, title) {
     const url = `${location.origin}${location.pathname}#/${path}`;
     if (navigator.share) {
-      try { await navigator.share({ title: `${title} – The Winter Day`, url }); } catch (e) { /* أُلغيت المشاركة */ }
+      try { await navigator.share({ title: `${title} – The Winter Day`, url }); } catch (e) { }
       return;
     }
     try { await navigator.clipboard.writeText(url); toast(T().linkCopied); } catch (e) { window.prompt(T().share, url); }
   }
-  // ملف .ics يفتح في تقويم الجوال (توقيت السعودية = UTC+3)
+
   function downloadICS(id) {
     const s = SESSIONS.find((x) => x.id === id);
     const [y, mo, d] = EVENT.date.split('-').map(Number);
@@ -1192,7 +1161,6 @@
     toast(T().calToast);
   }
 
-  // ---------- نافذة التفاصيل: فقرة أو منتج ----------
   const sheet = $('#sheet');
   function favButton(key, title) {
     const on = state.favs.has(key);
@@ -1264,7 +1232,6 @@
     sheet.scrollTop = top;
   }
 
-  // ---------- «اكتشفي يومك الشتوي» ----------
   const quizEl = $('#quiz');
   let quizStep = 0, quizPicks = [];
   function openQuiz() {
@@ -1339,7 +1306,6 @@
     toast(T().planSaved);
   }
 
-  // ---------- «بطاقتي الشتوية»: صورة جاهزة للمشاركة ----------
   const makerEl = $('#maker');
   let cardBlob = null, cardTimer = 0, cardDraw = 0;
   function openMaker() {
@@ -1369,7 +1335,7 @@
   });
   function cardPlan() {
     if (state.plan) return state.plan;
-    // بدون اختبار: أول ما في المفضلة، أو اقتراح افتراضي
+
     const favItems = [...state.favs].filter((k) => k.startsWith('s:') || k.startsWith('p:'))
       .map((k) => ({ kind: k.startsWith('s:') ? 'session' : 'product', id: k.slice(2) }));
     const items = [...favItems, { kind: 'session', id: 'w1-1' }, { kind: 'product', id: 'nadfa/latte' }, { kind: 'product', id: 'frost/earrings' }];
@@ -1384,12 +1350,11 @@
       .map((f) => document.fonts.load(f).catch(() => null)));
     const plan = cardPlan();
     const items = planItems(plan);
-    // الصور تشتغل لما يكون الموقع على الإنترنت أو localhost (مو من ملف على الجهاز)
+
     const photos = location.protocol.startsWith('http') ? await Promise.all(items.map((it) => loadImg(it.photo))) : [];
     const qr = location.protocol.startsWith('http') ? await loadImg('media/qr.png') : null;
-    if (id !== cardDraw) return;  // فيه رسم أحدث (مثلًا تغيّر الاسم)
+    if (id !== cardDraw) return;
 
-    // الخلفية: ليل + شفق + نجوم
     const bg = g.createLinearGradient(0, 0, 0, H);
     bg.addColorStop(0, '#0B2447'); bg.addColorStop(1, '#040B1C');
     g.fillStyle = bg; g.fillRect(0, 0, W, H);
@@ -1402,7 +1367,7 @@
     g.fillStyle = '#fff';
     for (let i = 0; i < 140; i++) { g.globalAlpha = .25 + rnd() * .6; g.beginPath(); g.arc(rnd() * W, rnd() * H, .8 + rnd() * 2.4, 0, 7); g.fill(); }
     g.globalAlpha = 1;
-    // إطار كريستالي
+
     g.strokeStyle = 'rgba(207,230,247,.35)'; g.lineWidth = 2;
     g.beginPath(); g.roundRect(40, 40, W - 80, H - 80, 44); g.stroke();
 
@@ -1425,7 +1390,6 @@
     if (name) text(name, W / 2, 400, '700 74px "El Messiri"', '#FFFFFF');
     text(persona, W / 2, name ? 475 : 425, `700 ${name ? 46 : 66}px "El Messiri"`, name ? '#9FD4F5' : '#FFFFFF');
 
-    // عناصر الخطة
     const labels = plan.persona ? [t.planWorkshop, t.planDrink, t.planShop] : ['', '', ''];
     const top = 540, rowH = 150, gap = 18, x0 = 110, w = W - 220, ph = 110;
     items.forEach((it, i) => {
@@ -1443,7 +1407,6 @@
       text(it.sub, tx, y + (labels[i] ? 120 : 104), '500 27px Tajawal', '#A3B8D6', al);
     });
 
-    // الأسفل: QR + Elevate Events
     if (qr) {
       g.fillStyle = '#fff'; g.beginPath(); g.roundRect(W / 2 - 66, 1060, 132, 132, 20); g.fill();
       g.drawImage(qr, W / 2 - 56, 1070, 112, 112);
@@ -1468,13 +1431,12 @@
     if (!cardBlob) return;
     const file = new File([cardBlob], 'my-winter-day.png', { type: 'image/png' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: 'The Winter Day' }); } catch (e) { /* أُلغيت المشاركة */ }
+      try { await navigator.share({ files: [file], title: 'The Winter Day' }); } catch (e) { }
     } else {
       $('#card-dl').click();
     }
   }
 
-  // ---------- حركة البطاقات مع الماوس، وظهور الأقسام مع التمرير ----------
   const fineHover = matchMedia('(hover: hover) and (pointer: fine)');
   let tilted = null;
   document.addEventListener('pointermove', (e) => {
@@ -1502,7 +1464,6 @@
     els.forEach((el, i) => { el.style.setProperty('--d', `${(i % 6) * 70}ms`); revealer.observe(el); });
   }
 
-  // ---------- التفاعل ----------
   [sheet, quizEl, makerEl].forEach((d) => d.addEventListener('click', (e) => { if (e.target === d) d.close(); }));
   document.addEventListener('click', (e) => {
     if (e.target.closest('#lang-btn')) { setLanguage(state.lang === 'ar' ? 'en' : 'ar'); return; }
@@ -1553,7 +1514,7 @@
     if (hello) { sayHello(hello); return; }
     const ftab = e.target.closest('[data-ftab]');
     if (ftab) { state.favTab = ftab.dataset.ftab; renderView(); return; }
-    // روابط تفتح صفحة بتصفية جاهزة (من الرئيسية)
+
     const go = e.target.closest('[data-goto-cat], [data-goto-bcat]');
     if (go) {
       if (go.dataset.gotoCat) { state.progCat = go.dataset.gotoCat; state.progQ = ''; }
@@ -1564,7 +1525,7 @@
   function refreshChips(attr, current) {
     $$(`[${attr}]`).forEach((b) => b.setAttribute('aria-pressed', b.getAttribute(attr) === current));
   }
-  // الخريطة بالكيبورد، وقائمة التجهيز
+
   document.addEventListener('keydown', (e) => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.venue [data-zone], .venue [data-pin]')) {
       e.preventDefault();
@@ -1586,7 +1547,6 @@
   });
   window.addEventListener('hashchange', onRoute);
 
-  // ---------- «خلّيها تثلج»: ثلج خفيف فوق كل الصفحات ----------
   let globalSnowOn = false, gsRaf = 0;
   function setGlobalSnow(on) {
     globalSnowOn = on;
@@ -1623,7 +1583,7 @@
     };
     gsRaf = requestAnimationFrame(step);
   }
-  // الثلج العام يختفي لما الواجهة (اللي فيها ثلجها) ظاهرة
+
   let heroWatch = null;
   function watchHero() {
     if (heroWatch) heroWatch.disconnect();
@@ -1636,11 +1596,10 @@
 
   function tick() { renderCountdown(); renderProgList(); }
 
-  // شاشة البداية: مرة وحدة بكل زيارة
   function hideSplash() {
     const splash = $('#splash');
     let seen = false;
-    try { seen = sessionStorage.getItem('winterday-splash') === '1'; sessionStorage.setItem('winterday-splash', '1'); } catch (e) { /* بدون تخزين */ }
+    try { seen = sessionStorage.getItem('winterday-splash') === '1'; sessionStorage.setItem('winterday-splash', '1'); } catch (e) { }
     if (seen || calm()) { splash.remove(); return; }
     setTimeout(() => {
       splash.classList.add('hide');
@@ -1648,9 +1607,8 @@
     }, 900);
   }
 
-  // يشتغل بدون نت (فقط لما يكون الموقع على الإنترنت أو localhost، مو من ملف)
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => { /* المتصفح ما يدعمه */ });
+    navigator.serviceWorker.register('sw.js').catch(() => { });
   }
 
   applyLanguage();

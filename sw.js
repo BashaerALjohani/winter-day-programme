@@ -1,6 +1,4 @@
-/* Service worker: يخلي التطبيق يفتح بسرعة ويشتغل بدون نت يوم الفعالية.
-   لما تعدّلين أي ملف، غيّري رقم النسخة تحت عشان يتحدث عند الزوار. */
-const CACHE = 'winterday-v7';
+const CACHE = 'winterday-v8';
 const SHELL = [
   './', 'index.html', 'style.css', 'app.js', 'data.js', 'art.js', 'manifest.webmanifest',
   'media/hero-poster.jpg', 'media/qr.png', 'media/icons/icon-192.png',
@@ -16,7 +14,6 @@ self.addEventListener('activate', (e) => {
     .then(() => self.clients.claim()));
 });
 
-// يعرض النسخة المحفوظة فورًا، ويحدّثها من النت بالخلفية (الصور تنحفظ أول ما تنفتح)
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);

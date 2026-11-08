@@ -1,5 +1,3 @@
-/* رسومات المنتجات والورش (SVG) بألوان هوية الفعالية.
-   مؤقتة لين توصل صور الأركان الحقيقية: ضعي الصورة في media واكتبي مسارها بدل اسم الرسمة في data.js */
 const ART = (() => {
   const N = '#0B2447', W = '#1D4F91', M = '#4C8DD6', I = '#CFE6F7', S = '#FFFFFF';
   const G = '#E9B872', B = '#8A5A3B', C1 = '#E3B07A', C2 = '#C98E55';
@@ -133,8 +131,6 @@ const ART = (() => {
   };
 })();
 
-/* يرجّع الرسمة كـ SVG، وفوقها الصورة الحقيقية إذا فيه photo.
-   لو الصورة ما تحمّلت (أو بدون نت) تنحذف وتبقى الرسمة تحتها. */
 function artHTML(key, label, photo) {
   const alt = label || '';
   if (!photo) return `<svg viewBox="0 0 120 120" role="img" aria-label="${alt}">${ART[key] || ART.flake}</svg>`;
