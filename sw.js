@@ -1,11 +1,11 @@
-const CACHE = 'winterday-v9';
+const CACHE = 'winterday-v10';
 const SHELL = [
   './', 'index.html', 'style.css', 'app.js', 'data.js', 'art.js', 'manifest.webmanifest',
   'media/hero-poster.jpg', 'media/qr.png', 'media/icons/icon-192.png',
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {

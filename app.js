@@ -58,7 +58,7 @@
       workshopsInfo: (w, n) => `${w} ورش · فترتين · ${n} مقاعد لكل فترة`, guestsLong: (n) => `+${n.toLocaleString('en')} طالبة`,
       aboutTitle: 'عن المنظّم', faqTitle: 'أسئلة شائعة', helpTitle: 'تحتاجين مساعدة؟',
       share: 'مشاركة', addCal: 'أضيفي للتقويم', openBooth: 'زيارة البوث', linkCopied: 'انسخ الرابط',
-      savedToast: 'انحفظ في المفضلة', removedToast: 'انشال من المفضلة', calToast: 'نزل ملف التقويم',
+      savedToast: 'انحفظ في المفضلة', removedToast: 'انشال من المفضلة', seeFavs: 'عرض المفضلة', calToast: 'نزل ملف التقويم',
       qrTitle: 'افتحي التطبيق في جوالك', qrText: 'امسحي الكود بكاميرا الجوال، وكل شي معك يوم الفعالية.',
       installTitle: 'ثبّتي التطبيق', installText: 'يفتح من الشاشة الرئيسية مثل أي تطبيق، ويشتغل حتى بدون نت.',
       installBtn: 'تثبيت التطبيق', installed: 'التطبيق مثبّت على جهازك',
@@ -133,7 +133,7 @@
       workshopsInfo: (w, n) => `${w} workshops · 2 slots · ${n} places each`, guestsLong: (n) => `${n.toLocaleString('en')}+ students`,
       aboutTitle: 'About the organiser', faqTitle: 'FAQs', helpTitle: 'Need help?',
       share: 'Share', addCal: 'Add to calendar', openBooth: 'Visit the booth', linkCopied: 'Link copied',
-      savedToast: 'Saved to favourites', removedToast: 'Removed from favourites', calToast: 'Calendar file downloaded',
+      savedToast: 'Saved to favourites', removedToast: 'Removed from favourites', seeFavs: 'See favourites', calToast: 'Calendar file downloaded',
       qrTitle: 'Open the app on your phone', qrText: 'Scan the code with your phone camera and take the day with you.',
       installTitle: 'Install the app', installText: 'Open it from your home screen like any app, even without internet.',
       installBtn: 'Install the app', installed: 'The app is installed on this device',
@@ -263,7 +263,8 @@
     if (navigator.vibrate) navigator.vibrate(12);
     if (sheet.open) refreshSheet();
     renderFavCounts();
-    toast(state.favs.has(key) ? T().savedToast : T().removedToast);
+    const on = state.favs.has(key);
+    toast(on ? T().savedToast : T().removedToast, on && state.route.name !== 'favourites');
     if (state.route.name === 'favourites') renderView();
   }
   function renderFavCounts() {
@@ -271,12 +272,15 @@
   }
 
   let toastTimer;
-  function toast(msg) {
+  function toast(msg, go = false) {
     const el = $('#toast');
-    el.textContent = msg;
+    const host = $('dialog[open]') || document.body;
+    if (el.parentNode !== host) host.appendChild(el);
+    el.classList.toggle('has-go', go);
+    el.innerHTML = go ? `<span>${esc(msg)}</span><a class="toast-go" href="#/favourites">${icon('i-heart')}${T().seeFavs}</a>` : esc(msg);
     el.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+    toastTimer = setTimeout(() => el.classList.remove('show'), go ? 4500 : 2200);
   }
 
   function applyLanguage() {
@@ -1421,7 +1425,7 @@
     saveFavs();
     renderFavCounts();
     if (navigator.vibrate) navigator.vibrate([10, 40, 10]);
-    toast(T().planSaved);
+    toast(T().planSaved, true);
   }
 
   const makerEl = $('#maker');
@@ -1585,6 +1589,7 @@
   [sheet, quizEl, makerEl].forEach((d) => d.addEventListener('click', (e) => { if (e.target === d) d.close(); }));
   document.addEventListener('click', (e) => {
     if (e.target.closest('#lang-btn')) { setLanguage(state.lang === 'ar' ? 'en' : 'ar'); return; }
+    if (e.target.closest('.toast-go')) $('#toast').classList.remove('show');
     if (e.target.closest('dialog a[href^="#"]')) [sheet, quizEl, makerEl].forEach((d) => d.open && d.close());
     const fav = e.target.closest('[data-fav]');
     if (fav) { if (!state.favs.has(fav.dataset.fav)) favPop(fav); toggleFav(fav.dataset.fav); return; }
