@@ -287,6 +287,140 @@ h1, h2, h3 { line-height: 1.25; }
 @keyframes puddle { from { opacity: 0; transform: scale(.3, .6); } to { opacity: 1; transform: none; } }
 @keyframes reform { from { transform: scale(1.6, .04); opacity: 0; } 60% { transform: scale(.94, 1.08); opacity: 1; } to { transform: none; } }
 
+.hero-sm.dance .snowman { animation: dance 1.3s ease-in-out; }
+.hero-sm.dance .sm-arm-l { animation: dance-arm-l .325s ease-in-out 4 alternate; }
+.hero-sm.dance .sm-arm-r { animation: dance-arm-r .325s ease-in-out 4 alternate; }
+@keyframes dance { 0%, 100% { transform: none; } 15% { transform: translateY(-10px) rotate(-10deg); } 30% { transform: rotate(8deg); } 45% { transform: translateY(-12px) rotate(10deg); } 60% { transform: rotate(-8deg); } 75% { transform: translateY(-8px) rotate(-6deg); } }
+@keyframes dance-arm-l { to { transform: rotate(38deg); } }
+@keyframes dance-arm-r { to { transform: rotate(-38deg); } }
+.hero-sm.sneeze .snowman { animation: achoo .9s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes achoo { 0% { transform: none; } 30% { transform: scale(.95, 1.04) rotate(-7deg); } 45% { transform: scale(1.06, .94) rotate(9deg) translateX(4px); } 60% { transform: rotate(-3deg); } 100% { transform: none; } }
+.sneeze-flake { position: absolute; top: 24%; left: 66%; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1.5px rgba(29, 79, 145, .35), 0 0 10px rgba(159, 212, 245, .95); pointer-events: none; opacity: 0; animation: sneeze-fly 1s ease-out forwards; }
+[dir="rtl"] .sneeze-flake { left: 34%; }
+@keyframes sneeze-fly { 0% { opacity: 1; transform: translate(0, 0) scale(var(--s)); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(calc(var(--s) * .4)); } }
+
+.fav-pop { position: fixed; z-index: 120; width: 0; height: 0; pointer-events: none; }
+.fav-pop .snowman { position: absolute; left: -24px; bottom: 0; width: 48px; height: auto; filter: drop-shadow(0 6px 10px rgba(4, 11, 28, .4)); animation: pop-sm 1.6s cubic-bezier(.3, 1.4, .5, 1) both; }
+@keyframes pop-sm { 0% { opacity: 0; transform: translateY(16px) scale(.3); } 18%, 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-10px) scale(.85); } }
+.snowman.throw .sm-arm-l { animation: toss-l .3s .25s ease-out 4 alternate; }
+.snowman.throw .sm-arm-r { animation: toss-r .3s .25s ease-out 4 alternate; }
+@keyframes toss-l { to { transform: rotate(42deg); } }
+@keyframes toss-r { to { transform: rotate(-42deg); } }
+.fav-heart { position: absolute; left: -10px; bottom: 40px; width: 20px; height: 20px; color: #FF8FB3; opacity: 0; filter: drop-shadow(0 0 6px rgba(255, 143, 179, .8)); animation: heart-fly 1.05s var(--d) cubic-bezier(.2, .7, .3, 1) forwards; }
+.fav-heart svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+@keyframes heart-fly { 0% { opacity: 0; transform: translate(0, 10px) scale(.3); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), -78px) scale(1.15); } }
+
+.map-walker { transition: transform 1.1s cubic-bezier(.45, .05, .35, 1); pointer-events: none; }
+.venue .snowman { scale: none; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .45)); }
+
+.scene-sm { position: absolute; z-index: 2; bottom: -2px; inset-inline-end: 0; width: 50%; max-width: 172px; pointer-events: none; }
+.scene-sm .snowman { width: 100%; height: auto; filter: drop-shadow(0 8px 10px rgba(4, 11, 28, .4)); }
+.scene-sm.bp-sm { bottom: 2px; inset-inline-end: 4px; width: 158px; }
+.scene-sm.vh-sm { bottom: auto; top: 8px; inset-inline-end: 6px; width: clamp(132px, 17vw, 210px); max-width: none; }
+.sh-art { position: relative; }
+.sh-art .scene-sm { bottom: 24px; inset-inline-end: 8px; width: 136px; }
+.scene .sm-body { animation: breathe 3.2s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.02, .975); } }
+.scene .brush { fill: none; stroke: #8B5A2B; stroke-width: 3; stroke-linecap: round; }
+.scene .brush-tip { fill: #E85D75; }
+
+.scene-mug .sm-arm-r, .scene-mug .sm-hand { transform-box: view-box; transform-origin: 81px 72px; animation: paint 1.2s ease-in-out infinite alternate; }
+@keyframes paint { from { transform: rotate(-6deg); } to { transform: rotate(13deg); } }
+.scene-mug .brush-tip { animation: tip-colors 4.8s steps(1) infinite; }
+@keyframes tip-colors { 0% { fill: #E85D75; } 25% { fill: #2E6DB4; } 50% { fill: #F2C14E; } 75% { fill: #4FBF9F; } }
+.mug-body { fill: #F5F9FF; stroke: #9FB3D1; stroke-width: 2; }
+.mug-handle { fill: none; stroke: #9FB3D1; stroke-width: 4; stroke-linecap: round; }
+.scene .pdot { transform-box: fill-box; transform-origin: center; animation: dot-pop 4.8s ease-out infinite; }
+.pdot.d1 { fill: #E85D75; animation-delay: -4.6s; }
+.pdot.d2 { fill: #2E6DB4; animation-delay: -3.4s; }
+.pdot.d3 { fill: #F2C14E; animation-delay: -2.2s; }
+.pdot.d4 { fill: #4FBF9F; animation-delay: -1s; }
+@keyframes dot-pop { 0% { transform: scale(0); } 8% { transform: scale(1.5); } 14%, 88% { transform: scale(1); } 100% { transform: scale(0); } }
+
+.scene-keychain .charm { transform-box: view-box; transform-origin: 104px 56px; animation: charm-swing 1.6s ease-in-out infinite alternate; }
+@keyframes charm-swing { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
+.ring { fill: none; stroke: #F2C14E; stroke-width: 2.4; }
+.chain { fill: none; stroke: #C9D8EC; stroke-width: 1.6; stroke-dasharray: 2 1.5; }
+.bead.b1 { fill: #F28CB1; }
+.bead.b2 { fill: #B7C0FF; }
+.gem-cut { fill: none; stroke: rgba(255, 255, 255, .7); stroke-width: .9; stroke-linejoin: round; }
+.gem { fill: #7EC8F5; stroke: #FFFFFF; stroke-width: 1.4; stroke-linejoin: round; animation: gem-glow 1.6s ease-in-out infinite alternate; }
+@keyframes gem-glow { from { fill: #7EC8F5; } to { fill: #C8B6FF; } }
+.spark { fill: #FFFFFF; transform-box: fill-box; transform-origin: center; animation: twinkle 1.4s ease-in-out infinite; }
+.spark.s2 { animation-delay: -.7s; }
+@keyframes twinkle { 0%, 100% { transform: scale(.2) rotate(0); opacity: .3; } 50% { transform: scale(1.3) rotate(45deg); opacity: 1; } }
+
+.scene-grad .sm-hat, .scene-grad .sm-brim, .scene-grad .sm-pom { display: none; }
+.grad-cap { transform-box: fill-box; transform-origin: 50% 80%; animation: cap-toss 2.6s cubic-bezier(.3, .8, .4, 1) infinite; }
+@keyframes cap-toss { 0%, 50%, 100% { transform: none; } 18% { transform: translateY(-26px) rotate(-18deg); } 30% { transform: translateY(-20px) rotate(10deg); } 44% { transform: translateY(2px) rotate(-3deg); } }
+.cap-top { fill: #0B2447; stroke: #3B6FB0; stroke-width: 1; stroke-linejoin: round; }
+.cap-base { fill: #13294B; }
+.tassel { fill: none; stroke: #F2C14E; stroke-width: 1.8; stroke-linecap: round; }
+.tassel-end { fill: #F2C14E; }
+.easel-leg { fill: none; stroke: #8B5A2B; stroke-width: 3; stroke-linecap: round; }
+.canvas { fill: #FFFFFF; stroke: #D9C6A5; stroke-width: 2; }
+.stroke { fill: none; stroke-width: 3.4; stroke-linecap: round; stroke-dasharray: 70; animation: draw 3.2s ease-in-out infinite; }
+.stroke.s1 { stroke: #2E6DB4; }
+.stroke.s2 { stroke: #E8B07A; animation-delay: -1.6s; }
+@keyframes draw { 0% { stroke-dashoffset: 70; } 55%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -70; } }
+.scene-grad .sm-arm-r, .scene-grad .sm-hand { transform-box: view-box; transform-origin: 81px 70px; animation: paint 1s ease-in-out infinite alternate; }
+
+.scene-tote .tote { transform-box: view-box; transform-origin: 100px 82px; animation: tote-swing 1.4s ease-in-out infinite alternate; }
+@keyframes tote-swing { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+.tote-handle { fill: none; stroke: #C9B89A; stroke-width: 2.6; stroke-linecap: round; }
+.tote-bag { fill: #F3E9D7; stroke: #C9B89A; stroke-width: 1.6; }
+.tote-art { fill: none; stroke: #2E6DB4; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 22; animation: tote-draw 2.8s ease-in-out infinite; }
+@keyframes tote-draw { 0% { stroke-dashoffset: 22; stroke: #2E6DB4; } 45%, 80% { stroke-dashoffset: 0; stroke: #E85D75; } 100% { stroke-dashoffset: 0; stroke: #2E6DB4; } }
+
+.scene-cocoa .sm-arm-r, .scene-cocoa .sm-hand { transform-box: view-box; transform-origin: 81px 70px; animation: sip 3.2s ease-in-out infinite; }
+@keyframes sip { 0%, 22%, 72%, 100% { transform: none; } 34%, 60% { transform: rotate(-11deg); } }
+.scene-cocoa .sm-eye { transform-box: fill-box; transform-origin: center; animation: cozy 3.2s ease-in-out infinite; }
+@keyframes cozy { 0%, 26%, 68%, 100% { transform: none; } 34%, 60% { transform: scaleY(.15); } }
+.scene-cocoa .sm-cheek { animation: blush 3.2s ease-in-out infinite; }
+@keyframes blush { 34%, 60% { opacity: .95; } }
+.cup-body { fill: #F5F9FF; stroke: #9FB3D1; stroke-width: 1.4; stroke-linejoin: round; }
+.cocoa { fill: #6B3E26; }
+.cup-heart { fill: #F28CB1; }
+.cup-handle { fill: none; stroke: #9FB3D1; stroke-width: 2.2; stroke-linecap: round; }
+.steam { fill: none; stroke: #FFFFFF; stroke-width: 1.8; stroke-linecap: round; opacity: .85; animation: steam 2.4s ease-out infinite; }
+.steam.st2 { animation-delay: -.8s; }
+.steam.st3 { animation-delay: -1.6s; }
+@keyframes steam { 0% { opacity: 0; transform: translateY(4px); } 30% { opacity: .9; } 100% { opacity: 0; transform: translateY(-10px); } }
+
+.scene-honey .sm-arm-r, .scene-honey .sm-hand { transform-box: view-box; transform-origin: 81px 72px; animation: dip 2.8s ease-in-out infinite; }
+@keyframes dip { 0%, 100% { transform: rotate(-7deg); } 38%, 52% { transform: rotate(6deg); } }
+.dipper { fill: none; stroke: #8B5A2B; stroke-width: 3; stroke-linecap: round; }
+.dipper-head { fill: #F2B233; stroke: #C98A12; stroke-width: 1.4; }
+.drip { fill: #F2B233; transform-box: fill-box; transform-origin: center top; animation: drip 2.8s ease-in infinite; }
+@keyframes drip { 0%, 58% { opacity: 0; transform: scale(.4); } 68% { opacity: 1; transform: scale(1, 1.3); } 96% { opacity: .9; transform: translateY(16px) scale(.8); } 100% { opacity: 0; transform: translateY(18px) scale(.6); } }
+.jar-body { fill: #F2B233; stroke: #C98A12; stroke-width: 1.6; }
+.jar-rim { fill: #8B5A2B; }
+.jar-label { fill: #FFF4D6; }
+.jar-shine { fill: none; stroke: #FFFFFF; stroke-width: 2.6; stroke-linecap: round; opacity: .55; }
+
+.scene-earrings .sm-body { animation: admire 2.8s ease-in-out infinite alternate; }
+@keyframes admire { from { transform: rotate(-4deg); } to { transform: rotate(4deg) translateY(-2px); } }
+.scene-earrings .mirror { transform-box: view-box; transform-origin: 104px 56px; animation: mirror-tilt 2.8s ease-in-out infinite alternate; }
+@keyframes mirror-tilt { from { transform: rotate(8deg); } to { transform: rotate(-8deg); } }
+.mirror-handle { fill: none; stroke: #C9A55A; stroke-width: 3; stroke-linecap: round; }
+.mirror-frame { fill: #C9A55A; }
+.mirror-glass { fill: #DCEBFA; }
+.mirror-shine { fill: none; stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; animation: shine 2.2s ease-in-out infinite; }
+@keyframes shine { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+.ear-hook { fill: none; stroke: #C9A55A; stroke-width: 1.4; }
+.ear-gem { fill: #B7C0FF; stroke: #FFFFFF; stroke-width: 1; transform-box: fill-box; transform-origin: center top; animation: ear-glint 1.4s ease-in-out infinite alternate; }
+.ear-gem.e2 { animation-delay: -.7s; }
+@keyframes ear-glint { from { fill: #B7C0FF; transform: rotate(-12deg); } to { fill: #FF8FB3; transform: rotate(12deg) scale(1.2); } }
+
+.scene-scarf .sm-scarf-tail { display: none; }
+.hat-stripe { fill: none; stroke: #CFE6F7; stroke-width: 3; stroke-linecap: round; }
+.scene-scarf .scarf-wind { transform-box: view-box; transform-origin: 72px 60px; animation: flutter 1.5s ease-in-out infinite; }
+@keyframes flutter { 0%, 100% { transform: rotate(-14deg) skewY(0); } 25% { transform: rotate(-40deg) skewY(6deg); } 50% { transform: rotate(-22deg) skewY(-4deg); } 75% { transform: rotate(-46deg) skewY(5deg); } }
+.scarf-long { fill: #2E6DB4; }
+.scarf-stripe { fill: none; stroke: #CFE6F7; stroke-width: 2.2; stroke-linecap: round; }
+.scene-scarf .sm-pom { transform-box: fill-box; transform-origin: center; animation: pom 1.5s ease-in-out infinite; }
+@keyframes pom { 50% { transform: translate(3px, -2px); } }
+
 .sec { position: relative; padding: 72px 0 80px; }
 .sec-snow {
   --text: #0B2447; --muted: #51698C; --accent: #1D4F91;

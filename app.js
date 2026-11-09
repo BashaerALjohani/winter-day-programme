@@ -70,7 +70,7 @@
       namePh: 'اسمك (اختياري)', nameAria: 'الاسم على البطاقة', shareCard: 'شاركي البطاقة', saveCard: 'حفظ الصورة',
       cardMy: 'يومي في', cardDefault: 'يومي الشتوي', cardScan: 'امسحي الكود وافتحي التطبيق',
       cardHint: 'جاوبي «اكتشفي يومك» عشان تطلع خطتك وشخصيتك في البطاقة.',
-      smAria: 'رجل الثلج يسلّم عليك', smHello: ['أهلًا فيكِ! نلقاكِ 17 ديسمبر', 'المسي الثلج حولي ✨', 'جربي «اكتشفي يومك»!'],
+      smAria: 'رجل الثلج يسلّم عليك', smHello: ['أهلًا فيكِ! نلقاكِ 17 ديسمبر', 'المسي الثلج حولي ✨', 'جربي «اكتشفي يومك»!'], smDance: 'أرقص من الوناسة 🎶', smSneeze: 'هاتشو! ❄️',
       secWsK: 'الورش', secWsT: 'ورش تطلعين منها بشي من صنع يدك', secWsS: (n, s) => `${n} ورش · كل ورشة فترتين · ${s} مقاعد بالفترة`,
       secProgK: 'البرنامج', secProgT: 'يومك من البداية للختام', secProgS: 'رجل الثلج يمشي على مواعيد اليوم. اضغطي أي وقت لتفاصيله.',
       fullProg: 'البرنامج كامل', stops: ['الافتتاح', 'الورش (1)', 'الورش (2)', 'التحديات', 'الجوائز', 'الختام'],
@@ -145,7 +145,7 @@
       namePh: 'Your name (optional)', nameAria: 'Name on the card', shareCard: 'Share the card', saveCard: 'Save image',
       cardMy: 'My day at', cardDefault: 'My winter day', cardScan: 'Scan to open the app',
       cardHint: 'Take “Discover your day” to put your persona and plan on the card.',
-      smAria: 'Say hi to the snowman', smHello: ['Hi! See you on 17 December', 'Touch the snow around me ✨', 'Try “Discover your day”!'],
+      smAria: 'Say hi to the snowman', smHello: ['Hi! See you on 17 December', 'Touch the snow around me ✨', 'Try “Discover your day”!'], smDance: 'Dancing for joy 🎶', smSneeze: 'Achoo! ❄️',
       secWsK: 'Workshops', secWsT: 'Make something of your own', secWsS: (n, s) => `${n} workshops · 2 slots each · ${s} places per slot`,
       secProgK: 'Programme', secProgT: 'Your day, start to finish', secProgS: 'Our snowman walks through the day. Tap any time for details.',
       fullProg: 'Full programme', stops: ['Opening', 'Workshops 1', 'Workshops 2', 'Challenges', 'Prizes', 'Closing'],
@@ -365,12 +365,75 @@
   }
 
   function snowman(cls = '') {
-    return `<svg class="snowman ${cls}" viewBox="0 0 120 160" aria-hidden="true">
-      <ellipse class="sm-puddle" cx="60" cy="150" rx="46" ry="7"/>
+    return `<svg class="snowman ${cls}" viewBox="0 0 120 160" aria-hidden="true">${snowmanBody()}</svg>`;
+  }
+
+  const WS_SCENE = { w1: 'mug', w2: 'keychain', w3: 'grad', w4: 'tote' };
+  const CAT_SCENE = { cafes: 'cocoa', home: 'honey', accessories: 'earrings', clothing: 'scarf' };
+  const SCENES = {
+    mug: {
+      arm: 'M81 72 L102 88 M96 83 L101 77',
+      held: '<path class="brush" d="M102 88 L114 98"/><circle class="brush-tip" cx="115.5" cy="99.5" r="3"/>',
+      ground: `<rect class="mug-body" x="112" y="106" width="30" height="32" rx="6"/><path class="mug-handle" d="M142 114 q10 0 10 9 q0 9 -10 9"/>
+        <circle class="pdot d1" cx="120" cy="116" r="3.2"/><circle class="pdot d2" cx="131" cy="122" r="3"/>
+        <circle class="pdot d3" cx="122" cy="129" r="2.6"/><circle class="pdot d4" cx="135" cy="112" r="2.6"/>`,
+    },
+    keychain: {
+      held: `<g class="charm"><circle class="ring" cx="104" cy="56" r="5"/><path class="chain" d="M104 61 V80"/>
+        <circle class="bead b1" cx="104" cy="68" r="3"/><circle class="bead b2" cx="104" cy="76" r="3"/>
+        <path class="gem" d="M104 81 L115 94 L104 109 L93 94 Z"/><path class="gem-cut" d="M93 94 H115 M99 94 L104 81 L109 94 L104 109"/>
+        <path class="spark s1" d="M119 82 l2 4.5 4.5 2 -4.5 2 -2 4.5 -2 -4.5 -4.5 -2 4.5 -2z"/>
+        <path class="spark s2" d="M90 102 l1.4 3.2 3.2 1.4 -3.2 1.4 -1.4 3.2 -1.4 -3.2 -3.2 -1.4 3.2 -1.4z"/></g>`,
+    },
+    grad: {
+      held: '<path class="brush" d="M104 56 L112 62"/><circle class="brush-tip" cx="113" cy="63" r="2.6"/>',
+      extra: `<g class="grad-cap"><path class="cap-top" d="M38 22 L60 12 L82 22 L60 32 Z"/>
+        <path class="cap-base" d="M47 25 V32 Q60 38 73 32 V25 L60 31 Z"/><path class="tassel" d="M60 22 L78 26 V36"/>
+        <circle class="tassel-end" cx="78" cy="37" r="2"/></g>`,
+      ground: `<path class="easel-leg" d="M120 70 L110 150 M140 70 L150 150 M130 66 V150"/>
+        <rect class="canvas" x="108" y="58" width="44" height="52" rx="2"/>
+        <path class="stroke s1" d="M114 98 C122 80 132 96 146 72"/><path class="stroke s2" d="M114 70 C124 76 132 66 146 86"/>`,
+    },
+    tote: {
+      arm: 'M81 72 L100 82 M95 80 L99 74',
+      held: `<g class="tote"><path class="tote-handle" d="M93 94 Q100 76 107 94"/><rect class="tote-bag" x="86" y="92" width="28" height="32" rx="3"/>
+        <path class="tote-art" d="M100 99 V117 M92 103 L108 113 M92 113 L108 103"/></g>`,
+    },
+    cocoa: {
+      arm: 'M81 70 L94 58 M90 61 L88 55',
+      held: `<g class="cup"><path class="steam st1" d="M93 39 q-3 -4 0 -8 q3 -4 0 -8"/><path class="steam st2" d="M99 39 q-3 -4 0 -8 q3 -4 0 -8"/>
+        <path class="steam st3" d="M105 39 q-3 -4 0 -8 q3 -4 0 -8"/><path class="cup-body" d="M88 44 H110 L107 63 H91 Z"/>
+        <ellipse class="cocoa" cx="99" cy="44" rx="11" ry="3"/><path class="cup-heart" d="M99 57 c-3 -2 -4.5 -3.5 -4.5 -5 a2.2 2.2 0 0 1 4.5 -0.6 a2.2 2.2 0 0 1 4.5 0.6 c0 1.5 -1.5 3 -4.5 5z"/>
+        <path class="cup-handle" d="M110 47 q6 1 5 6.5 q-1 5 -6.5 4.5"/></g>`,
+    },
+    honey: {
+      arm: 'M81 72 L102 90 M96 85 L101 79',
+      held: '<path class="dipper" d="M102 90 L120 106"/><ellipse class="dipper-head" cx="122" cy="109" rx="4" ry="5"/><circle class="drip" cx="122" cy="115" r="2"/>',
+      ground: `<rect class="jar-body" x="112" y="112" width="34" height="34" rx="8"/><rect class="jar-rim" x="113" y="108" width="32" height="6" rx="2"/>
+        <rect class="jar-label" x="118" y="122" width="22" height="12" rx="2"/><path class="jar-shine" d="M116 118 V140"/>`,
+    },
+    earrings: {
+      held: `<g class="mirror"><path class="mirror-handle" d="M104 56 L109 53"/><ellipse class="mirror-frame" cx="113" cy="42" rx="9" ry="11"/>
+        <ellipse class="mirror-glass" cx="113" cy="42" rx="6.5" ry="8.5"/><path class="mirror-shine" d="M109 37 L116 47"/></g>`,
+      extra: `<path class="ear-hook" d="M43 44 V50 M77 44 V50"/><circle class="ear-gem e1" cx="43" cy="53" r="2.8"/><circle class="ear-gem e2" cx="77" cy="53" r="2.8"/>`,
+    },
+    scarf: {
+      extra: `<path class="hat-stripe" d="M46 24 Q60 18 74 24"/>
+        <g class="scarf-wind"><path class="scarf-long" d="M68 60 L74 98 L84 95 L76 59 Z"/><path class="scarf-stripe" d="M71 74 L79 72 M72 84 L81 82"/></g>`,
+    },
+  };
+  function sceneSnowman(name) {
+    const s = SCENES[name];
+    return `<svg class="snowman scene scene-${name}" viewBox="0 0 160 160" aria-hidden="true">${s.ground || ''}${snowmanBody(s.arm, s.held, s.extra)}</svg>`;
+  }
+  const sceneTag = (name, cls = '') => (name ? `<span class="scene-sm ${cls}" aria-hidden="true">${sceneSnowman(name)}</span>` : '');
+
+  function snowmanBody(armR = 'M81 70 L104 56 M98 60 L102 50', held = '', extra = '') {
+    return `<ellipse class="sm-puddle" cx="60" cy="150" rx="46" ry="7"/>
       <ellipse class="sm-shadow" cx="60" cy="151" rx="30" ry="5"/>
       <g class="sm-body">
         <path class="sm-arm sm-arm-l" d="M39 70 L16 56 M22 60 L18 50"/>
-        <path class="sm-arm sm-arm-r" d="M81 70 L104 56 M98 60 L102 50"/>
+        <path class="sm-arm sm-arm-r" d="${armR}"/>
         <circle class="sm-snow" cx="60" cy="118" r="32"/>
         <circle class="sm-snow" cx="60" cy="75" r="23"/>
         <circle class="sm-btn" cx="60" cy="72" r="2.6"/><circle class="sm-btn" cx="60" cy="83" r="2.6"/>
@@ -385,8 +448,9 @@
         <path class="sm-hat" d="M43 31 Q44 13 60 12 Q76 13 77 31 Z"/>
         <rect class="sm-brim" x="41" y="27" width="38" height="7" rx="3.5"/>
         <circle class="sm-pom" cx="60" cy="11" r="5"/>
-      </g>
-    </svg>`;
+        ${extra}
+        ${held ? `<g class="sm-hand">${held}</g>` : ''}
+      </g>`;
   }
 
   function landscape(cls, front) {
@@ -403,7 +467,7 @@
   function viewHome() {
     const t = T();
     const workshops = WORKSHOPS.map((w, i) => `<article class="ws-card tilt reveal">
-        <div class="art-tile">${artHTML(w.art, L(w.title), w.photo)}<span class="ws-num">0${i + 1}</span></div>
+        <div class="art-tile">${artHTML(w.art, L(w.title), w.photo)}<span class="ws-num">0${i + 1}</span>${sceneTag(WS_SCENE[w.id])}</div>
         <div class="ws-body">
           <h3><button type="button" class="open" data-open="${w.id}-1">${esc(L(w.title))}</button></h3>
           <p class="ws-desc">${esc(L(w.description))}</p>
@@ -523,7 +587,7 @@
     const t = T(), c = BOOTH_CATEGORIES[cat];
     const vs = VENDORS.filter((v) => v.category === cat);
     return `<a class="bp-intro" href="#/booths" data-goto-bcat="${cat}">
-        <span class="art-tile">${artHTML(c.art, '', c.photo)}</span>
+        <span class="art-tile">${artHTML(c.art, '', c.photo)}</span>${sceneTag(CAT_SCENE[cat], 'bp-sm')}
         <span class="bp-over"><small>${t.vendorsIn(vs.length)}</small><strong>${esc(L(c.label))}</strong>
           <span class="bp-all">${t.allInCat(L(c.label))}${icon('i-arrow')}</span></span>
       </a>
@@ -565,7 +629,8 @@
       .map((n) => `<g class="mp empty" transform="translate(${spots[n][0]} ${spots[n][1]})"><circle r="10"/></g>`).join('');
     const flakes = [[60, 40], [200, 36], [340, 44], [395, 300], [6, 300]].map(([x, y]) => `<use href="#flake" x="${x - 6}" y="${y - 6}" width="12" height="12" class="mflake"/>`).join('');
     return `<svg class="venue" viewBox="0 0 400 470" role="group" aria-label="${t.mapK}">${zones}${flakes}${empty}${pins}
-      <g class="you" transform="translate(166 447)"><circle r="5"/><circle r="5" class="you-ring"/></g></svg>`;
+      <g class="you" transform="translate(166 447)"><circle r="5"/><circle r="5" class="you-ring"/></g>
+      <g class="map-walker" id="map-walker" style="transform: translate(238px, 458px)"><svg class="snowman mini waving" x="-16" y="-43" width="32" height="43" viewBox="0 0 120 160">${snowmanBody()}</svg></g></svg>`;
   }
   function mapInfo(sel) {
     const t = T();
@@ -602,6 +667,26 @@
     return `<p class="eyebrow">${icon('i-pin')}${esc(L(z.label))}</p><p class="mi-sub">${t.mapHere}</p>
       <div class="mi-list">${z.sessions.map((sid) => sessionRow(SESSIONS.find((s) => s.id === sid))).join('')}</div>`;
   }
+  let walkTimer = 0;
+  function walkTo(kind, id) {
+    const walker = $('#map-walker');
+    if (!walker) return;
+    let tx, ty;
+    if (kind === 'pin') {
+      const [x, y] = pinSpots()[boothNum(VENDOR_BY_ID[id])] || [238, 458];
+      tx = x + 30; ty = y + 18;
+    } else {
+      const z = zoneById(id);
+      tx = z.x + z.w - 17; ty = z.y + z.h - 4;
+    }
+    const sm = $('.snowman', walker);
+    sm.classList.remove('waving');
+    sm.classList.add('walking');
+    walker.style.transform = `translate(${tx}px, ${ty}px)`;
+    clearTimeout(walkTimer);
+    walkTimer = setTimeout(() => { sm.classList.remove('walking'); sm.classList.add('waving'); }, calm() ? 0 : 1150);
+  }
+
   function selectMap(kind, id, scroll = true) {
     state.mapSel = [kind, id];
     $$('.venue .sel').forEach((el) => el.classList.remove('sel'));
@@ -612,6 +697,7 @@
       const z = MAP_ZONES.find((x) => x.booths && x.booths.includes(n));
       if (z) $(`.venue [data-zone="${z.id}"]`).classList.add('sel');
     }
+    walkTo(kind, id);
     const box = $('#map-info');
     box.innerHTML = mapInfo(state.mapSel);
     box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
@@ -747,13 +833,44 @@
   let helloIdx = 0, helloTimer = 0;
   function sayHello(btn) {
     const say = $('.sm-say', btn), t = T();
-    say.textContent = t.smHello[helloIdx++ % t.smHello.length];
-    btn.classList.remove('hop');
+    const step = helloIdx % 3, msg = Math.floor(helloIdx / 3) % t.smHello.length;
+    helloIdx++;
+    btn.classList.remove('hop', 'dance', 'sneeze');
     void btn.offsetWidth;
-    btn.classList.add('hop', 'talk');
+    if (step === 0) { say.textContent = t.smHello[msg]; btn.classList.add('hop'); }
+    if (step === 1) { say.textContent = t.smDance; btn.classList.add('dance'); }
+    if (step === 2) { say.textContent = t.smSneeze; btn.classList.add('sneeze'); sneeze(btn); }
+    btn.classList.add('talk');
     clearTimeout(helloTimer);
     helloTimer = setTimeout(() => btn.classList.remove('talk'), 2600);
-    if (navigator.vibrate) navigator.vibrate(10);
+    if (navigator.vibrate) navigator.vibrate(step === 2 ? [20, 30, 40] : 10);
+  }
+  function sneeze(btn) {
+    if (calm()) return;
+    const dir = document.documentElement.dir === 'rtl' ? -1 : 1;
+    for (let i = 0; i < 16; i++) {
+      const f = document.createElement('span');
+      f.className = 'sneeze-flake';
+      f.style.setProperty('--dx', `${dir * (40 + Math.random() * 80)}px`);
+      f.style.setProperty('--dy', `${(Math.random() - .6) * 70}px`);
+      f.style.setProperty('--s', (.5 + Math.random()).toFixed(2));
+      f.style.animationDelay = `${(Math.random() * 120).toFixed(0)}ms`;
+      btn.appendChild(f);
+      setTimeout(() => f.remove(), 1200);
+    }
+  }
+
+  function favPop(el) {
+    if (calm() || !el) return;
+    const r = el.getBoundingClientRect();
+    const pop = document.createElement('div');
+    pop.className = 'fav-pop';
+    pop.style.left = `${r.left + r.width / 2}px`;
+    pop.style.top = `${r.top + 4}px`;
+    pop.innerHTML = snowman('throw') + [-2, -1, 0, 1, 2].map((k, i) =>
+      `<span class="fav-heart" style="--dx:${k * 24}px;--d:${200 + i * 70}ms">${icon('i-heart', '')}</span>`).join('');
+    (el.closest('dialog') || document.body).appendChild(pop);
+    setTimeout(() => pop.remove(), 1700);
   }
 
   function renderCountdown() {
@@ -1023,6 +1140,7 @@
       <a class="back" href="#/booths">${icon('i-back')}${t.back}</a>
       <section class="vendor-hero">
         <div class="art-tile tile-${v.category} xl">${artHTML(v.art, name, v.photo)}</div>
+        ${sceneTag(CAT_SCENE[v.category], 'vh-sm')}
         <div class="vh-over">
           <span class="tag plain">${esc(L(BOOTH_CATEGORIES[v.category].label))}</span>
           <h1>${esc(name)}</h1>
@@ -1174,7 +1292,7 @@
     const st = statusOf(s, now());
     const title = L(s.title);
     const slots = s.workshop ? SESSIONS.filter((x) => x.workshop === s.workshop) : [];
-    return `<div class="sh-art"><div class="art-tile">${artHTML(s.art, title, s.photo)}</div></div>
+    return `<div class="sh-art"><div class="art-tile">${artHTML(s.art, title, s.photo)}</div>${sceneTag(WS_SCENE[s.workshop])}</div>
       <div class="sh-body">
         <span class="tag" style="--dot:${cat.color}">${esc(L(cat.label))}</span>
         <h2 id="sh-title">${esc(title)}</h2>
@@ -1200,7 +1318,7 @@
     const t = T();
     const [v, p] = productOf(key);
     const name = L(p.name);
-    return `<div class="sh-art"><div class="art-tile tile-${v.category}">${artHTML(p.art, name, p.photo)}</div></div>
+    return `<div class="sh-art"><div class="art-tile tile-${v.category}">${artHTML(p.art, name, p.photo)}</div>${sceneTag(CAT_SCENE[v.category])}</div>
       <div class="sh-body">
         <span class="tag plain">${esc(L(BOOTH_CATEGORIES[v.category].label))}</span>
         <h2 id="sh-title">${esc(name)}</h2>
@@ -1469,7 +1587,7 @@
     if (e.target.closest('#lang-btn')) { setLanguage(state.lang === 'ar' ? 'en' : 'ar'); return; }
     if (e.target.closest('dialog a[href^="#"]')) [sheet, quizEl, makerEl].forEach((d) => d.open && d.close());
     const fav = e.target.closest('[data-fav]');
-    if (fav) { toggleFav(fav.dataset.fav); return; }
+    if (fav) { if (!state.favs.has(fav.dataset.fav)) favPop(fav); toggleFav(fav.dataset.fav); return; }
     const open = e.target.closest('[data-open]');
     if (open) { if (quizEl.open) quizEl.close(); openSheet('session', open.dataset.open); return; }
     const product = e.target.closest('[data-product]');
@@ -1478,7 +1596,7 @@
     const opt = e.target.closest('[data-qopt]');
     if (opt) { pickOption(Number(opt.dataset.qopt)); return; }
     if (e.target.closest('[data-qback]')) { quizStep = Math.max(0, quizStep - 1); renderQuiz(); return; }
-    if (e.target.closest('[data-saveplan]')) { savePlan(); return; }
+    if (e.target.closest('[data-saveplan]')) { favPop(e.target.closest('[data-saveplan]')); savePlan(); return; }
     if (e.target.closest('[data-maker]')) { openMaker(); return; }
     if (e.target.closest('[data-sharecard]')) { shareCard(); return; }
     const shareEl = e.target.closest('[data-share]');
