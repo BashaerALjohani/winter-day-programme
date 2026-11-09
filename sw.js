@@ -1,4 +1,4 @@
-const CACHE = 'winterday-v10';
+const CACHE = 'winterday-v11';
 const SHELL = [
   './', 'index.html', 'style.css', 'app.js', 'data.js', 'art.js', 'manifest.webmanifest',
   'media/hero-poster.jpg', 'media/qr.png', 'media/icons/icon-192.png',

@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>تسجيل الحضور | The Winter Day</title>
+  <title>Attendance | The Winter Day</title>
   <meta name="theme-color" content="#061226">
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/png" href="media/icons/favicon-48.png">
@@ -14,8 +14,9 @@
     :root { --bg: #061226; --night: #0B1A33; --ice: #CFE6F7; --accent: #9FD4F5; --pearl: #F5F9FF; --muted: #A9BEDA; --ink: #061633; }
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; }
+    html { overflow-x: hidden; }
     body {
-      min-height: 100svh; display: grid; place-items: center; padding: 24px 16px 40px;
+      min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; padding: 72px 16px 40px;
       font-family: 'Tajawal', system-ui, sans-serif; color: var(--pearl); overflow-x: hidden;
       background: radial-gradient(70% 50% at 85% 0%, rgba(126, 231, 214, .16), transparent 70%),
                   radial-gradient(70% 50% at 0% 25%, rgba(183, 192, 255, .15), transparent 70%),
@@ -23,6 +24,13 @@
     }
     .flake { position: fixed; top: -12px; width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: .7; pointer-events: none; animation: fall linear infinite; }
     @keyframes fall { to { transform: translate3d(var(--dx, 20px), 105vh, 0); } }
+    .lang {
+      position: fixed; z-index: 2; top: calc(16px + env(safe-area-inset-top)); inset-inline-end: 16px;
+      padding: 9px 16px; font-size: 15px; font-weight: 800; color: var(--pearl);
+      background: rgba(255, 255, 255, .1); border: 1px solid rgba(207, 230, 247, .45);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .lang svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
     .card {
       position: relative; width: min(100%, 420px); padding: 28px 24px 26px; text-align: center; border-radius: 28px;
       background: linear-gradient(160deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03));
@@ -50,13 +58,12 @@
     @keyframes pop { from { transform: scale(.3); opacity: 0; } }
     .spinner { width: 46px; height: 46px; border-radius: 50%; border: 4px solid rgba(207, 230, 247, .25); border-top-color: var(--ice); animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    h1 { margin: 6px 0 0; font-size: 26px; font-weight: 800; }
-    .en { margin: 0; font-size: 15px; color: var(--muted); direction: ltr; }
+    h1 { margin: 6px 0 0; font-size: 26px; font-weight: 800; line-height: 1.3; }
     .msg { margin: 4px 0 0; font-size: 16px; color: var(--muted); }
-    .name { display: grid; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(207, 230, 247, .18); }
+    .name { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(207, 230, 247, .18); }
     .name label { font-size: 15px; color: var(--ice); }
     .row { display: flex; gap: 8px; }
-    input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(207, 230, 247, .35); background: rgba(255, 255, 255, .06); color: var(--pearl); font: inherit; font-size: 16px; }
+    input { flex: 1; width: 0; min-width: 0; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(207, 230, 247, .35); background: rgba(255, 255, 255, .06); color: var(--pearl); font: inherit; font-size: 16px; }
     input::placeholder { color: var(--muted); }
     button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 18px; border: none; border-radius: 999px; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; text-decoration: none; white-space: nowrap; }
     button { background: linear-gradient(135deg, #FFFFFF, #CFE6F7 45%, #8FB8E8); color: var(--ink); }
@@ -68,6 +75,8 @@
   </style>
 </head>
 <body>
+  <button type="button" class="lang" id="lang" lang="ar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></svg><span id="lang-text">عربي</span></button>
+
   <main class="card">
     <p class="brand">The Winter Day</p>
     <svg class="snowman" viewBox="0 0 120 160" aria-hidden="true">
@@ -93,34 +102,32 @@
     </svg>
 
     <section class="status" id="loading">
-      <div class="spinner" role="progressbar" aria-label="جاري التسجيل"></div>
-      <h1>جاري تسجيل حضورك…</h1>
-      <p class="en">Recording your attendance…</p>
+      <div class="spinner" id="spinner" role="progressbar" aria-label="Recording"></div>
+      <h1 data-t="recording">Recording your attendance…</h1>
     </section>
 
     <section class="status" id="done" hidden>
       <div class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-      <h1 id="done-title">تم تسجيل حضورك</h1>
-      <p class="en" id="done-en">Your attendance is recorded. Welcome!</p>
-      <p class="msg">أهلًا فيكِ في جلسة تطبيق The Winter Day</p>
+      <h1 id="done-title">Your attendance is recorded</h1>
+      <p class="msg" data-t="welcome">Welcome to The Winter Day app session!</p>
     </section>
 
     <section class="status" id="failed" hidden>
-      <h1>ما قدرنا نسجّل حضورك</h1>
-      <p class="en">We could not record it. Check the internet and try again.</p>
-      <button type="button" id="retry">حاولي مرة ثانية</button>
+      <h1 data-t="failed">We could not record your attendance</h1>
+      <p class="msg" data-t="failedMsg">Check your internet connection and try again.</p>
+      <button type="button" id="retry" data-t="retry">Try again</button>
     </section>
 
     <form class="name" id="name-form" hidden>
-      <label for="name">تبين يطلع اسمك في قائمة الحضور؟ (اختياري)</label>
+      <label for="name" data-t="nameLabel">Would you like your name on the attendance list? (optional)</label>
       <div class="row">
-        <input id="name" name="name" autocomplete="name" maxlength="60" placeholder="اسمك">
-        <button type="submit" id="save">أضيفي اسمي</button>
+        <input id="name" name="name" autocomplete="name" maxlength="60" placeholder="Your name">
+        <button type="submit" id="save" data-t="save">Add my name</button>
       </div>
       <p class="saved" id="saved" aria-live="polite"></p>
     </form>
 
-    <a class="btn" href="./">افتحي التطبيق</a>
+    <a class="btn" id="open" href="./?lang=en" data-t="open">Open the app</a>
   </main>
 
   <script>
@@ -128,11 +135,47 @@
       var FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSct7WlZcQHHeyr9mUh1CFXDtb9XzWy6vSQJ7KKZgN9nCx2g9Q/formResponse';
       var NAME = 'entry.9136701';
       var DEVICE = 'entry.576324616';
+      var T = {
+        en: {
+          title: 'Attendance | The Winter Day', switchTo: 'عربي', recording: 'Recording your attendance…', loadingAria: 'Recording',
+          done: 'Your attendance is recorded', already: 'Your attendance is already recorded', welcome: 'Welcome to The Winter Day app session!',
+          failed: 'We could not record your attendance', failedMsg: 'Check your internet connection and try again.', retry: 'Try again',
+          nameLabel: 'Would you like your name on the attendance list? (optional)', namePh: 'Your name', save: 'Add my name',
+          saved: 'Your name is saved ✓', notSaved: 'Not saved, please try again', open: 'Open the app'
+        },
+        ar: {
+          title: 'تسجيل الحضور | The Winter Day', switchTo: 'English', recording: 'جاري تسجيل حضورك…', loadingAria: 'جاري التسجيل',
+          done: 'تم تسجيل حضورك', already: 'حضورك مسجّل', welcome: 'أهلًا فيكِ في جلسة تطبيق The Winter Day',
+          failed: 'ما قدرنا نسجّل حضورك', failedMsg: 'تأكدي من الإنترنت وحاولي مرة ثانية.', retry: 'حاولي مرة ثانية',
+          nameLabel: 'تبين يطلع اسمك في قائمة الحضور؟ (اختياري)', namePh: 'اسمك', save: 'أضيفي اسمي',
+          saved: 'انحفظ اسمك ✓', notSaved: 'ما انحفظ، حاولي مرة ثانية', open: 'افتحي التطبيق'
+        }
+      };
       var today = new Date().toISOString().slice(0, 10);
       var $ = function (id) { return document.getElementById(id); };
+      var already = false, savedKey = '';
 
       function store(key, value) { try { localStorage.setItem(key, value); } catch (e) { } }
       function read(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+
+      var asked = null;
+      try { asked = new URLSearchParams(location.search).get('lang'); } catch (e) { }
+      var lang = asked === 'ar' || asked === 'en' ? asked : (read('wd-lang') === 'ar' ? 'ar' : 'en');
+
+      function apply() {
+        var t = T[lang];
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.title = t.title;
+        [].forEach.call(document.querySelectorAll('[data-t]'), function (el) { el.textContent = t[el.getAttribute('data-t')]; });
+        $('done-title').textContent = already ? t.already : t.done;
+        $('saved').textContent = savedKey ? t[savedKey] : '';
+        $('name').placeholder = t.namePh;
+        $('spinner').setAttribute('aria-label', t.loadingAria);
+        $('lang-text').textContent = t.switchTo;
+        $('lang').setAttribute('lang', lang === 'ar' ? 'en' : 'ar');
+        $('open').href = './?lang=' + lang;
+      }
 
       function deviceId() {
         var id = read('wd-device');
@@ -168,13 +211,19 @@
       var savedName = read('wd-name');
       if (savedName) $('name').value = savedName;
 
+      $('lang').addEventListener('click', function () {
+        lang = lang === 'en' ? 'ar' : 'en';
+        store('wd-lang', lang);
+        apply();
+      });
+
       if (read('wd-attended') === today) {
-        $('done-title').textContent = 'حضورك مسجّل';
-        $('done-en').textContent = 'Your attendance is already recorded.';
+        already = true;
         show('done');
       } else {
         record();
       }
+      apply();
 
       $('retry').addEventListener('click', record);
 
@@ -185,10 +234,13 @@
         $('save').disabled = true;
         send(name).then(function () {
           store('wd-name', name);
-          $('saved').textContent = 'انحفظ اسمك ✓';
+          savedKey = 'saved';
         }).catch(function () {
-          $('saved').textContent = 'ما انحفظ، حاولي مرة ثانية';
-        }).then(function () { $('save').disabled = false; });
+          savedKey = 'notSaved';
+        }).then(function () {
+          $('saved').textContent = T[lang][savedKey];
+          $('save').disabled = false;
+        });
       });
 
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
