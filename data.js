@@ -7,6 +7,7 @@ const EVENT = {
   location: { ar: 'الكليات التقنية العالمية – المدينة المنورة', en: 'International Technical Colleges – Madinah' },
   guests: 1300,
   workshopSeats: 10,
+  bookingUrl: 'https://script.google.com/macros/s/AKfycbyB_RHUd-5I0OF04tRblD7QzkpB_8ltu6aHdWzMC81d8lU1dfrPwVPvmygXc_P65PptzA/exec',
   vendorsTarget: 15,
   help: {
     ar: 'مكتب الاستقبال عند البوابة الرئيسية، وفريق Elevate Events موجود طوال اليوم.',

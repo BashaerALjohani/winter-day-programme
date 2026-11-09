@@ -40,6 +40,14 @@
       badgeLive: 'جارية الآن', badgePast: 'انتهت', seats: (n) => `${n} مقاعد`,
       seatsLong: (n) => `${n} أشخاص بالكثير في كل فترة`, tbc: 'يُعلن قريبًا',
       slotLabel: (n) => (n === 1 ? 'الفترة الأولى' : 'الفترة الثانية'), slotsTitle: 'فترات الورشة',
+      bookTitle: 'احجزي مقعدك', seatsLeft: (l, c) => (l ? `باقي ${l} من ${c}` : 'مكتملة'),
+      bookNameLabel: 'اكتبي اسمك عشان نحجز لك', bookNamePh: 'اسمك', bookBtn: 'احجزي',
+      bookNote: 'الاسم بس، بدون إيميل ولا جوال.', bookedMine: 'مقعدك محجوز في هذي الفترة', bookCancel: 'إلغاء الحجز',
+      bookClosed: 'الحجز انتهى لهذي الفترة', bookFull: 'الفترة مكتملة، جربي الفترة الثانية.', bookLoading: 'جاري تحميل المقاعد…',
+      bookErrNet: 'ما قدرنا نوصل للحجز، تأكدي من الإنترنت.', bookRetry: 'حاولي مرة ثانية',
+      bookErr: { full: 'امتلت الفترة قبل ما نحجز لك، جربي الفترة الثانية.', clash: 'عندك ورشة محجوزة في نفس الوقت.',
+        same: 'حاجزة هذي الورشة في الفترة الثانية.', name: 'اكتبي اسمك أول.', closed: 'الحجز انتهى لهذي الفترة.' },
+      bookedToast: 'انحجز مقعدك ✓', cancelToast: 'انلغى حجزك', seatMine: 'محجوز ✓', seatLeft: (n) => `باقي ${n}`, seatFull: 'مكتملة',
       favAdd: (t) => `إضافة «${t}» للمفضلة`, favRemove: (t) => `إزالة «${t}» من المفضلة`,
       emptyT: 'ما فيه نتائج', emptyD: 'جربي كلمة ثانية أو اختاري «الكل».',
       sheetAdd: 'أضيفي للمفضلة', sheetRemove: 'محفوظة في المفضلة', pastNote: 'انتهت هذي الفقرة', close: 'إغلاق',
@@ -115,6 +123,14 @@
       badgeLive: 'On now', badgePast: 'Ended', seats: (n) => `${n} places`,
       seatsLong: (n) => `Up to ${n} people per slot`, tbc: 'Coming soon',
       slotLabel: (n) => `Slot ${n}`, slotsTitle: 'Workshop slots',
+      bookTitle: 'Book your seat', seatsLeft: (l, c) => (l ? `${l} of ${c} left` : 'Full'),
+      bookNameLabel: 'Your name for the booking', bookNamePh: 'Your name', bookBtn: 'Book',
+      bookNote: 'Just your name. No email or phone.', bookedMine: 'Your seat in this slot is booked', bookCancel: 'Cancel booking',
+      bookClosed: 'Booking for this slot has closed', bookFull: 'This slot is full. Try the other slot.', bookLoading: 'Loading seats…',
+      bookErrNet: 'We could not reach the bookings. Check your internet.', bookRetry: 'Try again',
+      bookErr: { full: 'This slot filled up. Try the other slot.', clash: 'You already have a workshop booked at this time.',
+        same: 'You already booked this workshop in the other slot.', name: 'Please write your name first.', closed: 'Booking for this slot has closed.' },
+      bookedToast: 'Your seat is booked ✓', cancelToast: 'Your booking is cancelled', seatMine: 'Booked ✓', seatLeft: (n) => `${n} left`, seatFull: 'Full',
       favAdd: (t) => `Add “${t}” to favourites`, favRemove: (t) => `Remove “${t}” from favourites`,
       emptyT: 'No results', emptyD: 'Try another word or choose “All”.',
       sheetAdd: 'Add to favourites', sheetRemove: 'Saved in favourites', pastNote: 'This session has ended', close: 'Close',
@@ -175,6 +191,7 @@
     progCat: 'all', progQ: '', progView: 'timeline', boothCat: 'all', boothQ: '', favTab: 'all',
     favs: loadFavs(), plan: load(PLAN_KEY, null), cardName: load(NAME_KEY, ''),
     homeBoothCat: 'cafes', mapSel: null, checks: load(CHECK_KEY, []),
+    seats: null, seatsErr: false, bookMsg: null,
   };
   let progSig = '', progWalkerUpdate = null;
   const cleanups = [];
@@ -267,6 +284,105 @@
     toast(on ? T().savedToast : T().removedToast, on && state.route.name !== 'favourites');
     if (state.route.name === 'favourites') renderView();
   }
+  const bookingOn = () => !!EVENT.bookingUrl;
+  function rawGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function rawSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { } }
+  function deviceId() {
+    let id = rawGet('wd-device');
+    if (!/^WD-[A-Z0-9]{4,12}$/.test(id || '')) {
+      id = 'WD-' + Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X');
+      rawSet('wd-device', id);
+    }
+    return id;
+  }
+  const bookingClosed = (s) => now() >= at(s.start);
+  let seatsReq = null, booking = false;
+  function loadSeats() {
+    if (!bookingOn()) return Promise.resolve();
+    if (seatsReq) return seatsReq;
+    seatsReq = fetch(`${EVENT.bookingUrl}?device=${encodeURIComponent(deviceId())}`)
+      .then((r) => r.json())
+      .then((d) => { if (d && d.booked) { state.seats = d; state.seatsErr = false; } else state.seatsErr = !state.seats; })
+      .catch(() => { state.seatsErr = !state.seats; })
+      .then(() => { seatsReq = null; renderSeats(); });
+    return seatsReq;
+  }
+  function bookingCall(body) {
+    return fetch(EVENT.bookingUrl, { method: 'POST', body: JSON.stringify(Object.assign({ device: deviceId() }, body)) })
+      .then((r) => r.json());
+  }
+  function seatTag(id) {
+    const d = state.seats, s = SESSIONS.find((x) => x.id === id);
+    if (!d || !s || bookingClosed(s)) return ['', ''];
+    if ((d.mine || []).includes(id)) return [T().seatMine, 'mine'];
+    const left = Math.max(0, (d.cap || s.capacity) - ((d.booked || {})[id] || 0));
+    return left ? [T().seatLeft(left), left <= 3 ? 'low' : ''] : [T().seatFull, 'full'];
+  }
+  function bookBox(s) {
+    const t = T(), d = state.seats;
+    const msg = state.bookMsg && state.bookMsg.slot === s.id ? `<p class="book-msg" role="alert">${esc(state.bookMsg.text)}</p>` : '';
+    if (!d) {
+      return `<div class="book-box" id="book-box"><div class="book-head"><b>${t.bookTitle}</b></div>
+        <p class="book-line">${state.seatsErr ? t.bookErrNet : t.bookLoading}</p>
+        ${state.seatsErr ? `<button type="button" class="btn btn-outline" data-book-retry>${t.bookRetry}</button>` : ''}</div>`;
+    }
+    const cap = d.cap || s.capacity, n = (d.booked || {})[s.id] || 0, left = Math.max(0, cap - n);
+    const mine = (d.mine || []).includes(s.id);
+    let body;
+    if (mine) body = `<p class="book-ok">${icon('i-check')}${t.bookedMine}</p><button type="button" class="btn btn-outline" data-book-cancel="${s.id}">${t.bookCancel}</button>`;
+    else if (bookingClosed(s)) body = `<p class="book-line">${t.bookClosed}</p>`;
+    else if (!left) body = `<p class="book-line">${t.bookFull}</p>`;
+    else {
+      body = `<form class="book-form" data-book="${s.id}"><label for="book-name">${t.bookNameLabel}</label>
+        <div class="book-row"><input id="book-name" maxlength="60" autocomplete="name" placeholder="${esc(t.bookNamePh)}" value="${esc(rawGet('wd-name') || '')}">
+        <button type="submit" class="btn btn-primary">${t.bookBtn}</button></div><p class="book-note">${t.bookNote}</p></form>`;
+    }
+    return `<div class="book-box${mine ? ' is-mine' : ''}" id="book-box"><div class="book-head"><b>${t.bookTitle}</b><span>${t.seatsLeft(left, cap)}</span></div>
+      <div class="book-bar" aria-hidden="true"><span style="width:${Math.min(100, (n / cap) * 100)}%"></span></div>${body}${msg}</div>`;
+  }
+  function renderSeats() {
+    $$('[data-seat]').forEach((el) => { const [txt, cls] = seatTag(el.dataset.seat); el.textContent = txt; el.className = `seat-tag ${cls}`; });
+    const box = $('#book-box');
+    if (!box || !sheet.open || sheet.dataset.kind !== 'session' || document.activeElement === $('#book-name')) return;
+    const typed = $('#book-name') ? $('#book-name').value : null;
+    box.outerHTML = bookBox(SESSIONS.find((x) => x.id === sheet.dataset.id));
+    if (typed !== null && $('#book-name')) $('#book-name').value = typed;
+  }
+  function bookDone(d, slot, okText) {
+    if (d && d.booked) state.seats = { cap: d.cap, booked: d.booked, mine: d.mine || [] };
+    if (d && d.ok) { state.bookMsg = null; return okText; }
+    const errs = T().bookErr;
+    state.bookMsg = { slot, text: (d && errs[d.error]) || T().bookErrNet };
+    return '';
+  }
+  function book(slot, name, form) {
+    if (booking) return;
+    booking = true;
+    const btn = $('button[type="submit"]', form);
+    if (btn) btn.disabled = true;
+    bookingCall({ action: 'book', slot, name })
+      .then((d) => {
+        const msg = bookDone(d, slot, T().bookedToast);
+        if (msg) {
+          const key = 's:' + slot;
+          if (!state.favs.has(key)) { state.favs.add(key); saveFavs(); syncHearts(key); renderFavCounts(); }
+          toast(msg, state.route.name !== 'favourites');
+          if (navigator.vibrate) navigator.vibrate([12, 40, 12]);
+        }
+      })
+      .catch(() => { state.bookMsg = { slot, text: T().bookErrNet }; })
+      .then(() => { booking = false; if ($('#book-name') && $('#book-name') === document.activeElement) $('#book-name').blur(); renderSeats(); });
+  }
+  function cancelBooking(slot, btn) {
+    if (booking) return;
+    booking = true;
+    btn.disabled = true;
+    bookingCall({ action: 'cancel', slot })
+      .then((d) => { const msg = bookDone(d, slot, T().cancelToast); if (msg) toast(msg); })
+      .catch(() => { state.bookMsg = { slot, text: T().bookErrNet }; })
+      .then(() => { booking = false; renderSeats(); });
+  }
+
   function renderFavCounts() {
     $$('.fav-count').forEach((el) => { el.textContent = state.favs.size; el.hidden = !state.favs.size; });
   }
@@ -351,6 +467,7 @@
     watchHero();
     if (r.name === 'booths') renderBoothList();
     setupReveal(view);
+    if (bookingOn() && $('[data-seat]', view)) { renderSeats(); loadSeats(); }
   }
 
   function productCard(v, p, cls = '') {
@@ -478,7 +595,7 @@
           <p class="ws-take">${icon('i-gift')}<span>${t.wsTake}</span><b>${esc(L(w.takeaway))}</b></p>
           <p class="ws-meta"><span>${icon('i-clock')}${t.wsMins}</span><span>${icon('i-pin')}${esc(L(w.location))}</span><span>${icon('i-users')}${EVENT.workshopSeats}</span></p>
           <div class="ws-slots">${WORKSHOP_SLOTS.map(([a], k) => `<button type="button" class="ws-slot" data-open="${w.id}-${k + 1}">
-            <small>${t.slotShort(k + 1)}</small><b>${fmt(a)}</b></button>`).join('')}</div>
+            <small>${t.slotShort(k + 1)}</small><b>${fmt(a)}</b>${bookingOn() ? `<em class="seat-tag" data-seat="${w.id}-${k + 1}"></em>` : ''}</button>`).join('')}</div>
         </div>
       </article>`).join('');
     const steps = t.wsSteps.map(([a, b], i) => `<li><span class="st-n">${i + 1}</span><span><b>${a}</b><small>${b}</small></span></li>`).join('');
@@ -1305,6 +1422,7 @@
           <p>${icon('i-pin')}${esc(L(s.location))}</p>
           ${s.capacity ? `<p>${icon('i-users')}${t.seatsLong(s.capacity)}</p>` : ''}
         </div>
+        ${s.workshop && bookingOn() ? bookBox(s) : ''}
         ${st === 'live' || st === 'past' ? `<p class="status-pill ${st}">${st === 'live' ? t.badgeLive : t.pastNote}</p>` : ''}
         <p class="sh-desc">${esc(L(s.description))}</p>
         ${slots.length ? `<div class="sh-slots"><p class="sh-slots-title">${t.slotsTitle}</p>${slots.map((x) =>
@@ -1342,8 +1460,10 @@
       </div>`;
   }
   function openSheet(kind, id) {
+    if (sheet.dataset.id !== id) state.bookMsg = null;
     sheet.dataset.kind = kind;
     sheet.dataset.id = id;
+    if (kind === 'session' && bookingOn() && /^w\d-\d$/.test(id)) loadSeats();
     $('#sh-content').innerHTML = kind === 'product' ? productSheet(id) : sessionSheet(id);
     if (!sheet.open) sheet.showModal();
     sheet.scrollTop = 0;
@@ -1608,6 +1728,9 @@
     if (shareEl) { share(shareEl.dataset.share, shareEl.dataset.title); return; }
     const ics = e.target.closest('[data-ics]');
     if (ics) { downloadICS(ics.dataset.ics); return; }
+    const cancelB = e.target.closest('[data-book-cancel]');
+    if (cancelB) { cancelBooking(cancelB.dataset.bookCancel, cancelB); return; }
+    if (e.target.closest('[data-book-retry]')) { state.seatsErr = false; renderSeats(); loadSeats(); return; }
     if (e.target.closest('[data-install]') && installPrompt) {
       installPrompt.prompt();
       installPrompt.userChoice.finally(() => { installPrompt = null; renderView(); });
@@ -1740,4 +1863,15 @@
   onRoute();
   hideSplash();
   setInterval(tick, 30000);
+  document.addEventListener('submit', (e) => {
+    const f = e.target.closest('form[data-book]');
+    if (!f) return;
+    e.preventDefault();
+    const input = $('#book-name', f);
+    const name = input.value.trim();
+    if (!name) { state.bookMsg = { slot: f.dataset.book, text: T().bookErr.name }; renderSeats(); input.focus(); return; }
+    rawSet('wd-name', name);
+    book(f.dataset.book, name, f);
+  });
+  if (bookingOn()) setInterval(() => { if (!document.hidden && ($('[data-seat]') || (sheet.open && $('#book-box')))) loadSeats(); }, 45000);
 })();
