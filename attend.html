@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>تسجيل الحضور | The Winter Day</title>
+  <meta name="theme-color" content="#061226">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="media/icons/favicon-48.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #061226; --night: #0B1A33; --ice: #CFE6F7; --accent: #9FD4F5; --pearl: #F5F9FF; --muted: #A9BEDA; --ink: #061633; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      min-height: 100svh; display: grid; place-items: center; padding: 24px 16px 40px;
+      font-family: 'Tajawal', system-ui, sans-serif; color: var(--pearl); overflow-x: hidden;
+      background: radial-gradient(70% 50% at 85% 0%, rgba(126, 231, 214, .16), transparent 70%),
+                  radial-gradient(70% 50% at 0% 25%, rgba(183, 192, 255, .15), transparent 70%),
+                  linear-gradient(180deg, #0B2447 0%, var(--bg) 70%);
+    }
+    .flake { position: fixed; top: -12px; width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: .7; pointer-events: none; animation: fall linear infinite; }
+    @keyframes fall { to { transform: translate3d(var(--dx, 20px), 105vh, 0); } }
+    .card {
+      position: relative; width: min(100%, 420px); padding: 28px 24px 26px; text-align: center; border-radius: 28px;
+      background: linear-gradient(160deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03));
+      border: 1px solid rgba(207, 230, 247, .28); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .8);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .brand { margin: 0 0 6px; font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 700; color: var(--ice); direction: ltr; }
+    .snowman { display: block; width: 120px; height: auto; margin: 4px auto 8px; overflow: visible; }
+    .sm-snow { fill: url(#sm-snow); stroke: rgba(11, 36, 71, .14); }
+    .sm-arm { fill: none; stroke: #7A4B2A; stroke-width: 3.4; stroke-linecap: round; }
+    .sm-dot { fill: #0B2447; }
+    .sm-nose { fill: #F28C28; }
+    .sm-cheek { fill: #F9A8B8; opacity: .55; }
+    .sm-hat { fill: #1D4F91; }
+    .sm-brim { fill: #CFE6F7; }
+    .sm-scarf { fill: #2E6DB4; }
+    .sm-body { transform-box: view-box; transform-origin: 60px 150px; animation: bob 2.4s ease-in-out infinite; }
+    .sm-arm-r { transform-box: view-box; transform-origin: 81px 70px; animation: wave 1.6s ease-in-out infinite; }
+    @keyframes bob { 50% { transform: translateY(-4px) rotate(2deg); } }
+    @keyframes wave { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-32deg); } }
+    .status { display: grid; justify-items: center; gap: 8px; min-height: 120px; }
+    .tick { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #FFFFFF, #CFE6F7 45%, #8FB8E8); color: var(--ink); box-shadow: 0 0 34px rgba(207, 230, 247, .55); }
+    .tick svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+    .done .tick { animation: pop .5s cubic-bezier(.3, 1.6, .5, 1) both; }
+    @keyframes pop { from { transform: scale(.3); opacity: 0; } }
+    .spinner { width: 46px; height: 46px; border-radius: 50%; border: 4px solid rgba(207, 230, 247, .25); border-top-color: var(--ice); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h1 { margin: 6px 0 0; font-size: 26px; font-weight: 800; }
+    .en { margin: 0; font-size: 15px; color: var(--muted); direction: ltr; }
+    .msg { margin: 4px 0 0; font-size: 16px; color: var(--muted); }
+    .name { display: grid; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(207, 230, 247, .18); }
+    .name label { font-size: 15px; color: var(--ice); }
+    .row { display: flex; gap: 8px; }
+    input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(207, 230, 247, .35); background: rgba(255, 255, 255, .06); color: var(--pearl); font: inherit; font-size: 16px; }
+    input::placeholder { color: var(--muted); }
+    button, .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 18px; border: none; border-radius: 999px; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+    button { background: linear-gradient(135deg, #FFFFFF, #CFE6F7 45%, #8FB8E8); color: var(--ink); }
+    button:disabled { opacity: .6; cursor: default; }
+    .btn { margin-top: 16px; background: rgba(255, 255, 255, .08); color: var(--pearl); border: 1px solid rgba(207, 230, 247, .35); }
+    .saved { margin: 0; font-size: 14px; color: #7EE7D6; min-height: 1.4em; }
+    [hidden] { display: none !important; }
+    @media (prefers-reduced-motion: reduce) { .flake, .sm-body, .sm-arm-r, .spinner { animation: none; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p class="brand">The Winter Day</p>
+    <svg class="snowman" viewBox="0 0 120 160" aria-hidden="true">
+      <defs>
+        <radialGradient id="sm-snow" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#F1F7FD"/><stop offset="1" stop-color="#C5D9EE"/></radialGradient>
+      </defs>
+      <ellipse cx="60" cy="151" rx="30" ry="5" fill="rgba(0,0,0,.25)"/>
+      <g class="sm-body">
+        <path class="sm-arm" d="M39 70 L16 56 M22 60 L18 50"/>
+        <path class="sm-arm sm-arm-r" d="M81 70 L104 56 M98 60 L102 50"/>
+        <circle class="sm-snow" cx="60" cy="118" r="32"/>
+        <circle class="sm-snow" cx="60" cy="75" r="23"/>
+        <circle class="sm-dot" cx="60" cy="72" r="2.6"/><circle class="sm-dot" cx="60" cy="83" r="2.6"/>
+        <circle class="sm-snow" cx="60" cy="40" r="17"/>
+        <path class="sm-scarf" d="M43 54 Q60 63 77 54 L77 60 Q60 69 43 60 Z"/>
+        <circle class="sm-dot" cx="54" cy="38" r="2.2"/><circle class="sm-dot" cx="66" cy="38" r="2.2"/>
+        <path class="sm-nose" d="M60 42 L72 45.5 L60 48 Z"/>
+        <circle class="sm-cheek" cx="49.5" cy="45" r="3"/><circle class="sm-cheek" cx="70.5" cy="45" r="3"/>
+        <path class="sm-hat" d="M43 31 Q44 13 60 12 Q76 13 77 31 Z"/>
+        <rect class="sm-brim" x="41" y="27" width="38" height="7" rx="3.5"/>
+        <circle cx="60" cy="11" r="5" fill="#FFFFFF"/>
+      </g>
+    </svg>
+
+    <section class="status" id="loading">
+      <div class="spinner" role="progressbar" aria-label="جاري التسجيل"></div>
+      <h1>جاري تسجيل حضورك…</h1>
+      <p class="en">Recording your attendance…</p>
+    </section>
+
+    <section class="status" id="done" hidden>
+      <div class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h1 id="done-title">تم تسجيل حضورك</h1>
+      <p class="en" id="done-en">Your attendance is recorded. Welcome!</p>
+      <p class="msg">أهلًا فيكِ في جلسة تطبيق The Winter Day</p>
+    </section>
+
+    <section class="status" id="failed" hidden>
+      <h1>ما قدرنا نسجّل حضورك</h1>
+      <p class="en">We could not record it. Check the internet and try again.</p>
+      <button type="button" id="retry">حاولي مرة ثانية</button>
+    </section>
+
+    <form class="name" id="name-form" hidden>
+      <label for="name">تبين يطلع اسمك في قائمة الحضور؟ (اختياري)</label>
+      <div class="row">
+        <input id="name" name="name" autocomplete="name" maxlength="60" placeholder="اسمك">
+        <button type="submit" id="save">أضيفي اسمي</button>
+      </div>
+      <p class="saved" id="saved" aria-live="polite"></p>
+    </form>
+
+    <a class="btn" href="./">افتحي التطبيق</a>
+  </main>
+
+  <script>
+    (function () {
+      var FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSct7WlZcQHHeyr9mUh1CFXDtb9XzWy6vSQJ7KKZgN9nCx2g9Q/formResponse';
+      var NAME = 'entry.9136701';
+      var DEVICE = 'entry.576324616';
+      var today = new Date().toISOString().slice(0, 10);
+      var $ = function (id) { return document.getElementById(id); };
+
+      function store(key, value) { try { localStorage.setItem(key, value); } catch (e) { } }
+      function read(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+
+      function deviceId() {
+        var id = read('wd-device');
+        if (!id) {
+          id = 'WD-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+          store('wd-device', id);
+        }
+        return id;
+      }
+
+      function send(name) {
+        var body = new URLSearchParams();
+        body.append(NAME, name || '');
+        body.append(DEVICE, deviceId());
+        return fetch(FORM, { method: 'POST', mode: 'no-cors', body: body });
+      }
+
+      function show(id) {
+        ['loading', 'done', 'failed'].forEach(function (s) { $(s).hidden = s !== id; });
+        $('name-form').hidden = id !== 'done';
+        if (id === 'done') $('done').classList.add('done');
+        if (navigator.vibrate && id === 'done') navigator.vibrate([12, 40, 12]);
+      }
+
+      function record() {
+        show('loading');
+        send(read('wd-name') || '').then(function () {
+          store('wd-attended', today);
+          show('done');
+        }).catch(function () { show('failed'); });
+      }
+
+      var savedName = read('wd-name');
+      if (savedName) $('name').value = savedName;
+
+      if (read('wd-attended') === today) {
+        $('done-title').textContent = 'حضورك مسجّل';
+        $('done-en').textContent = 'Your attendance is already recorded.';
+        show('done');
+      } else {
+        record();
+      }
+
+      $('retry').addEventListener('click', record);
+
+      $('name-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = $('name').value.trim();
+        if (!name) { $('name').focus(); return; }
+        $('save').disabled = true;
+        send(name).then(function () {
+          store('wd-name', name);
+          $('saved').textContent = 'انحفظ اسمك ✓';
+        }).catch(function () {
+          $('saved').textContent = 'ما انحفظ، حاولي مرة ثانية';
+        }).then(function () { $('save').disabled = false; });
+      });
+
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) {
+        for (var i = 0; i < 28; i++) {
+          var f = document.createElement('span');
+          f.className = 'flake';
+          var size = 2 + Math.random() * 5;
+          f.style.width = f.style.height = size + 'px';
+          f.style.left = Math.random() * 100 + 'vw';
+          f.style.opacity = (.3 + Math.random() * .6).toFixed(2);
+          f.style.animationDuration = (7 + Math.random() * 9).toFixed(1) + 's';
+          f.style.animationDelay = (-Math.random() * 14).toFixed(1) + 's';
+          f.style.setProperty('--dx', (Math.random() * 60 - 30).toFixed(0) + 'px');
+          document.body.appendChild(f);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
